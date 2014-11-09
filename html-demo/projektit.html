@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Projektit</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../css/bootstrap.css" rel="stylesheet">
+        <link href="../css/bootstrap-theme.css" rel="stylesheet">
+        <link href="../css/main.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <ol class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li class="active">Hallinointi / Projektit</li>
+        </ol>
+
+        <div class="container">      
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation"><a href="index.html">Home</a></li>
+                <li role="presentation" class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        Hallinnointi <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a href="henkilot.html">Henkilöt</a></li>
+                        <li role="presentation"><a href="#">Projektit</a></li>
+                    </ul>
+                </li>
+                <li role="presentation"><a href="#">Logout</a></li>
+            </ul>
+            <h2></h2>
+
+
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="projektin_lisays">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseLisays" aria-expanded="true" aria-controls="collapseLisays">
+                                Lisää projekti
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseLisays" class="panel-collapse collapse" role="tabpanel" aria-labelledby="projektin_lisays">
+                        <div class="panel-body">
+                            <form role="form">
+                                <div class="row">
+                                    <label class="col-xs-4" for="Projekti_nimi">Projektin nimi</label>
+                                    <label class="col-xs-4" for="Asiakas">Asiakas</label>                    
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4"><input class="form-control" type="text" id ="Projekti_nimi" placeholder="Projektin nimi"></div>
+                                    <div class="col-xs-4"><input class="form-control" type="text" id ="Lisätiedot" placeholder="Asiakas"></div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <br>
+                                        <button type="submit" class="btn btn-default">Lisää projekti</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">Projektit</h4>
+                </div>
+                <div class="panel-body">
+                    <!-- Table -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Projekti</th>
+                                <th>Asiakas</th>
+                                <th>Kuvaus</th>
+                                <th>Työntekijöitä</th>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Projekti 1</td>
+                                <td>Matti P</td>
+                                <td>Kuvaus tähän</td>
+                                <td>5</td>
+                                <td><button type="button" class="btn btn-xs btn-default">
+                                        <span></span>
+                                        Muokkaa tietoja</button></td>
+                            </tr>
+                            <tr>
+                                <td>Projekti 2</td>
+                                <td>Mikko A</td>  
+                                <td>Kuvaus tähän</td>
+                                <td>45</td>
+                                <td><button type="button" class="btn btn-xs btn-default">
+                                        <span></span>
+                                        Muokkaa tietoja</button></td>
+                            </tr>
+
+                            <tr>
+                                <td>Projekti 3</td>
+                                <td>Mikko M</td>
+                                <td>Kuvaus tähän</td>
+                                <td>7</td>
+                                <td><button type="button" class="btn btn-xs btn-default">
+                                        <span></span>
+                                        Muokkaa tietoja</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Projektin 1 tiedot
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                        <div class="panel-body">
+                            <table class="table table-striped">                       
+                                <thead>                          
+                                    <tr>  
+                                        <th>Henkilö</th>
+                                        <th>työtehtävä</th>
+                                        <th>päivä</th>
+                                        <th>Tunnit</th>
+                                        <th>lisätietoja</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>               
+                                        <td>Antti A</td>
+                                        <td>html-koodaus</td>
+                                        <td>23.09.2014</td>
+                                        <td>6</td>
+                                        <td></td> 
+                                    </tr>
+                                    <tr>
+                                        <td>Antti A</td>
+                                        <td>html-koodaus</td>
+                                        <td>23.09.2014</td>
+                                        <td>6</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Antti Aalto</td>
+                                        <td>käyttötapausten kartoitus</td>
+                                        <td>26.09.2014</td>
+                                        <td>5</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Antti Auvinen</td>
+                                        <td>php-koodaus</td>
+                                        <td>28.09.2014</td>
+                                        <td>4</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Marko L</td>
+                                        <td>php-koodaus</td>
+                                        <td>23.09.2014</td>
+                                        <td>1</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jenni V</td>
+                                        <td>php-koodaus</td>
+                                        <td>21.09.2014</td>
+                                        <td>4</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- Bootstrap core JavaScript
+    ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="../js/bootstrap.js"></script>
+    </body>
+</html>
