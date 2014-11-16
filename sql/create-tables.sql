@@ -2,19 +2,17 @@ CREATE TABLE henkilo(
 	henkilo_id serial PRIMARY KEY,
 	nimi varchar(40) NOT NULL,
         kayttajatunnus varchar(15) NOT NULL,
-        salasana varchar (15) NOT NULL
+        salasana varchar (15) NOT NULL     
 );
 
-CREATE TABLE asiakas(
-	asiakas_id serial PRIMARY KEY,
-	nimi varchar (40) NOT NULL
+CREATE TABLE vastuuhenkilo(
+        henkilo_id serial PRIMARY KEY REFERENCES henkilo ON DELETE CASCADE 
 );
 
 CREATE TABLE projekti(
 	nimi varchar(40) NOT NULL,
 	kuvaus varchar(80),
-	projekti_id serial PRIMARY KEY,
-	asiakas_id serial REFERENCES asiakas(asiakas_id)
+	projekti_id serial PRIMARY KEY
 );
 
 CREATE TABLE tyosyote(
