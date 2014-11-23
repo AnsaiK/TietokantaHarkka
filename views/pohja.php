@@ -1,4 +1,5 @@
-<?php if (!isset($_SESSION['henkilo'])) {
+<?php
+if (!isset($_SESSION['henkilo'])) {
     header('Location: login.php');
     exit();
 }
@@ -15,7 +16,7 @@
         <link href="../css/main.css" rel="stylesheet">
     </head>
     <body>
-                
+
         <ol class="breadcrumb">
             <li><a href="#" class="active">Home</a></li>
         </ol>
@@ -23,19 +24,41 @@
         <div class="container">
 
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation"  ><a href="#">Home</a></li>
+                <li role="presentation"  ><a href="etusivu.php">Home</a></li>
                 <li role="presentation" class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         Hallinnointi <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li role="presentation"><a href="henkilot.html">Henkilöt</a></li>
-                        <li role="presentation"><a href="projektit.html">Projektit</a></li>
+                        <li role="presentation"><a href="hallinnointi_henkilot.php">Henkilöt</a></li>
+                        <li role="presentation"><a href="hallinnointi_projektit.php">Projektit</a></li>
                     </ul>
                 </li>
                 <li role="presentation"><a href="logout.php">Kirjaudu ulos</a></li>
             </ul>
 
             <h1></h1>
+
+            <?php if (!empty($_SESSION['huomautus'])): ?>
+                <div class="alert alert-danger">
+                    <?php echo $_SESSION['huomautus']; ?>
+                </div>
+                <?php
+                // Samalla kun viesti näytetään, se poistetaan istunnosta,
+                // ettei se näkyisi myöhemmin jollain toisella sivulla uudestaan.
+                unset($_SESSION['huomautus']);
+            endif;
+            ?>
+
+            <?php if (!empty($_SESSION['kuittaus'])): ?>
+                <div class="alert alert-success">
+                    <?php echo $_SESSION['kuittaus']; ?>
+                </div>
+                <?php
+                // Samalla kun viesti näytetään, se poistetaan istunnosta,
+                // ettei se näkyisi myöhemmin jollain toisella sivulla uudestaan.
+                unset($_SESSION['kuittaus']);
+            endif;
+            ?>
 
             <?php require $sivu; ?>
 

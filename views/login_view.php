@@ -12,7 +12,8 @@
 
             <form role="form" action="login.php" method="POST">
                 <div class="row">
-                    <div class="col-xs-4"><input class="form-control" type="text" name ="username" value="<?php echo $data->kayttajatunnus; ?>" placeholder="Käyttäjätunnus"/>
+                    <div class="col-xs-4">
+                        <input class="form-control" type="text" name ="username" value="<?php echo htmlspecialchars($data->kayttajatunnus); ?>" placeholder="Käyttäjätunnus">
                     </div>
                 </div>
                 <div class="row">

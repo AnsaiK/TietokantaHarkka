@@ -5,7 +5,7 @@ require_once 'libs/models/Projekti.php'
 <!-- Omat projektit -->
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4 class="panel-title">Projektisi: <?php echo $_SESSION['nimi'] ?></li>
+        <h4 class="panel-title">Projektisi: <?php echo htmlspecialchars($_SESSION['nimi']) ?></li>
         </h4>
     </div>
     <div class="panel-body">
@@ -18,6 +18,7 @@ require_once 'libs/models/Projekti.php'
                     <th>Kuvaus</th>
                     <th>Tunnit</th>
                     <th>Viimeinen merkintä</th>
+                    <th></th>
                 </tr>
                 <!-- Otsikot loppu -->
             </thead>
@@ -25,13 +26,14 @@ require_once 'libs/models/Projekti.php'
                 <!-- Projektin tiedot tietokannasta -->
                 <?php foreach ($data->omatprojektit as $omatprojektitiedot): ?>
                     <tr>
-                        <td><a href="projekti.php?id=<?php echo $omatprojektitiedot->getProjekti_id(); ?>"><?php echo $omatprojektitiedot->getNimi(); ?></a></td>
-                        <td><?php echo $omatprojektitiedot->getKuvaus(); ?></td>
-                        <td>13</td>
-                        <td>23.09.2014</td>
-                    </tr>
-                <?php endforeach; ?>
-                <!-- Projektin tiedot tietokannasta, loppu -->
+                        <td><a href="projekti.php?id=<?php echo $omatprojektitiedot->getProjekti_id(); ?>"><?php echo htmlspecialchars($omatprojektitiedot->getNimi()); ?></a></td>
+                        <td><?php echo htmlspecialchars($omatprojektitiedot->getKuvaus()); ?></td>
+                        <td>Ei implementoitu</td>
+                        <td>Ei implementoitu</td>
+                        <td><button type = "button" class = "btn btn-xs btn-default">Poista projekti</button></td>
+                </tr>
+            <?php endforeach; ?>
+            <!-- Projektin tiedot tietokannasta, loppu -->
             </tbody>
         </table>
     </div> 
@@ -64,8 +66,8 @@ require_once 'libs/models/Projekti.php'
                         <!-- Kaikkien projektien tiedot tietokannasta -->
                         <?php foreach ($data->kaikkiprojektit as $projektitiedot): ?>
                             <tr>
-                                <td><?php echo $projektitiedot->getNimi(); ?></td>
-                                <td><?php echo $projektitiedot->getKuvaus(); ?></td>
+                                <td><?php echo htmlspecialchars($projektitiedot->getNimi()); ?></td>
+                                <td><?php echo htmlspecialchars($projektitiedot->getKuvaus()); ?></td>
                                 <td><button type = "button" class = "btn btn-xs btn-default">Liity projektiin</button></td>
                             </tr>
                         <?php endforeach; ?>
