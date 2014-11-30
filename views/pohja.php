@@ -25,14 +25,18 @@ if (!isset($_SESSION['henkilo'])) {
 
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation"  ><a href="etusivu.php">Home</a></li>
-                <li role="presentation" class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        Hallinnointi <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li role="presentation"><a href="hallinnointi_henkilot.php">Henkilöt</a></li>
-                        <li role="presentation"><a href="hallinnointi_projektit.php">Projektit</a></li>
-                    </ul>
-                </li>
+                <?php if (isset($_SESSION['vastuuhenkilo'])): ?>    
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Hallinnointi <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li role="presentation"><a href="hallinnointi_henkilot.php">Henkilöt</a></li>
+                            <li role="presentation"><a href="hallinnointi_projektit.php">Projektit</a></li>
+                        </ul>
+                    </li>
+                    <?php
+                endif;
+                ?>
                 <li role="presentation"><a href="logout.php">Kirjaudu ulos</a></li>
             </ul>
 
@@ -40,18 +44,27 @@ if (!isset($_SESSION['henkilo'])) {
 
             <?php if (!empty($_SESSION['huomautus'])): ?>
                 <div class="alert alert-danger">
-                    <?php echo $_SESSION['huomautus']; ?>
+                    <?php if (is_array($_SESSION['huomautus'])): ?>
+                        <ul>
+                            <?php foreach ($_SESSION['huomautus'] as $ilmoitus): ?>
+                                <li><?php echo $ilmoitus ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+
+                    <?php else: ?>
+                        <p><?php echo $_SESSION['huomautus'] ?></p>
+                    <?php endif; ?>
                 </div>
                 <?php
-                // Samalla kun viesti näytetään, se poistetaan istunnosta,
-                // ettei se näkyisi myöhemmin jollain toisella sivulla uudestaan.
                 unset($_SESSION['huomautus']);
             endif;
             ?>
 
-            <?php if (!empty($_SESSION['kuittaus'])): ?>
+
+
+                <?php if (!empty($_SESSION['kuittaus'])): ?>
                 <div class="alert alert-success">
-                    <?php echo $_SESSION['kuittaus']; ?>
+                <?php echo $_SESSION['kuittaus']; ?>
                 </div>
                 <?php
                 // Samalla kun viesti näytetään, se poistetaan istunnosta,
@@ -60,7 +73,7 @@ if (!isset($_SESSION['henkilo'])) {
             endif;
             ?>
 
-            <?php require $sivu; ?>
+<?php require $sivu; ?>
 
         </div>
 

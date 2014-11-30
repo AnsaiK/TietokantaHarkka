@@ -27,7 +27,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4 class="panel-title">Tiedot</h4></div>
+        <h4 class="panel-title">Kaikkien projektien tiedot</h4></div>
     <div class="panel-body">
         <table class="table table-striped">                       
             <thead>                          
@@ -42,7 +42,7 @@
             <tbody>
                 <?php foreach ($data->henkilonTyosyotteet as $hlo_syote): ?>
                     <tr>
-                        <td><?php echo $hlo_syote->getProjekti_Id(); ?> *Tähän tulee nimi*</td>
+                        <td><?php echo $hlo_syote->getProjekti_nimi();?></td>
                         <td><?php echo $hlo_syote->getKuvaus(); ?></td>
                         <td><?php echo $hlo_syote->getPaiva(); ?></td>
                         <td><?php echo $hlo_syote->getKesto(); ?></td>

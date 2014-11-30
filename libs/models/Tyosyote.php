@@ -3,6 +3,8 @@
 class Tyosyote {
 
     private $syote_id;
+    private $projekti_nimi;
+    private $henkilo_nimi;
     private $kuvaus;
     private $lisatiedot;
     private $paiva;
@@ -11,14 +13,16 @@ class Tyosyote {
     private $projekti_id;
     private $virheet = array();
 
-    public function __construct($syote_id, $kuvaus, $lisatiedot, $paiva, $kesto, $henkilo_id, $projekti_id) {
+    public function __construct($syote_id, $kuvaus, $lisatiedot, $paiva, $kesto, $henkilo_id, $projekti_id, $projekti_nimi, $henkilo_nimi) {
         $this->syote_id = $syote_id;
         $this->kuvaus = $kuvaus;
+        $this->lisatiedot = $lisatiedot;
         $this->paiva = $paiva;
         $this->kesto = $kesto;
-        $this->lisatiedot = $lisatiedot;
         $this->henkilo_id = $henkilo_id;
         $this->projekti_id = $projekti_id;
+        $this->projekti_nimi = $projekti_nimi;
+        $this->henkilo_nimi = $henkilo_nimi;
     }
 
     public function getSyote_id() {
@@ -51,6 +55,22 @@ class Tyosyote {
 
     public function getVirheet() {
         return $this->virheet;
+    }
+
+    public function getProjekti_nimi() {
+        return $this->projekti_nimi;
+    }
+
+    public function getHenkilo_nimi() {
+        return $this->henkilo_nimi;
+    }
+
+    public function setHenkilo_nimi($henkilo_nimi) {
+        $this->henkilo_nimi = $henkilo_nimi;
+    }
+
+    public function setProjekti_nimi($projekti_nimi) {
+        $this->projekti_nimi = $projekti_nimi;
     }
 
     public function setSyote_id($syote_id) {
@@ -93,8 +113,22 @@ class Tyosyote {
         $this->projekti_id = $projekti_id;
     }
 
+//    Työsyotteen haku 
+    public static function etsiTyosyote($syote_id) {
+        $sql = "SELECT syote_id, kuvaus, kesto, paiva, lisatiedot, henkilo_id, projekti_id FROM tyosyote WHERE syote_id = ? LIMIT 1";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($syote_id));
+        $tulos = $kysely->fetchObject();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return new Tyosyote($tulos->syote_id, $tulos->kuvaus, $tulos->lisatiedot, $tulos->paiva, $tulos->kesto, $tulos->henkilo_id, $tulos->projekti_id, '', '');
+        }
+    }
+
     public static function etsiHenkilonTyosyotteet($henkilo_id) {
-        $sql = "SELECT syote_id, kuvaus, paiva, kesto, henkilo_id, projekti_id FROM tyosyote WHERE henkilo_id = ?";
+        $sql = "SELECT projekti.nimi, t.syote_id, t.kuvaus, to_char(t.paiva, 'DD/MM/YYYY') as paiva, t.kesto, t.lisatiedot, t.henkilo_id, t.projekti_id FROM tyosyote AS t LEFT JOIN projekti ON projekti.projekti_id = t.projekti_id WHERE t.henkilo_id = ? ORDER BY t.paiva DESC";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
 
@@ -103,38 +137,48 @@ class Tyosyote {
             $syote = new Tyosyote();
             $syote->setSyote_id($tulos->syote_id);
             $syote->setKuvaus($tulos->kuvaus);
+            $syote->setLisatiedot($tulos->lisatiedot);
             $syote->setPaiva($tulos->paiva);
             $syote->setKesto($tulos->kesto);
             $syote->setHenkilo_id($tulos->henkilo_id);
             $syote->setProjekti_id($tulos->projekti_id);
+            $syote->setProjekti_nimi($tulos->nimi);
+            $syote->setHenkilo_nimi();
+
 
             $tulokset[] = $syote;
         }
         return $tulokset;
     }
 
+//    projektin kaikki syötteet
     public static function etsiProjektinTyosyotteet($projekti_id) {
-        $sql = "SELECT syote_id, kuvaus, paiva, kesto, henkilo_id, projekti_id FROM tyosyote WHERE projekti_id = ?";
+        $sql = "SELECT nimi, syote_id, kuvaus, to_char(paiva, 'DD/MM/YYYY') as paiva, kesto, lisatiedot, henkilo.henkilo_id, projekti_id FROM henkilo JOIN tyosyote ON henkilo.henkilo_id = tyosyote.henkilo_id AND tyosyote.projekti_id = ? ORDER BY nimi";
+//        $sql = "SELECT DISTINCT henkilo.nimi, t.syote_id, t.kuvaus, t.paiva, t.kesto, t.lisatiedot, t.henkilo_id, t.projekti_id FROM tyosyote AS t, henkilo where t.projekti_id = ? ORDER BY nimi";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id));
-
         $tulokset = array();
+
         foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
             $syote = new Tyosyote();
             $syote->setSyote_id($tulos->syote_id);
             $syote->setKuvaus($tulos->kuvaus);
+            $syote->setLisatiedot($tulos->lisatiedot);
             $syote->setPaiva($tulos->paiva);
             $syote->setKesto($tulos->kesto);
             $syote->setHenkilo_id($tulos->henkilo_id);
             $syote->setProjekti_id($tulos->projekti_id);
+            $syote->setProjekti_nimi();
+            $syote->setHenkilo_nimi($tulos->nimi);
 
             $tulokset[] = $syote;
         }
         return $tulokset;
     }
 
+//    henkilön projektikohtainen työsyötelistaus
     public static function etsiProjektinTyosyotteetHenkilolle($projekti_id, $henkilo_id) {
-        $sql = "SELECT syote_id, kuvaus, paiva, kesto, lisatiedot,henkilo_id, projekti_id FROM tyosyote WHERE projekti_id = ? and henkilo_id =?";
+        $sql = "SELECT projekti.nimi, t.syote_id, t.kuvaus, to_char(t.paiva, 'DD/MM/YYYY') as paiva, t.kesto, t.lisatiedot, t.henkilo_id, t.projekti_id FROM tyosyote AS t LEFT JOIN projekti ON projekti.projekti_id = t.projekti_id WHERE t.projekti_id = ? and t.henkilo_id = ? ORDER BY t.paiva DESC";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id, $henkilo_id));
 
@@ -143,40 +187,84 @@ class Tyosyote {
             $syote = new Tyosyote();
             $syote->setSyote_id($tulos->syote_id);
             $syote->setKuvaus($tulos->kuvaus);
+            $syote->setLisatiedot($tulos->lisatiedot);
+
             $syote->setPaiva($tulos->paiva);
             $syote->setKesto($tulos->kesto);
-            $syote->setLisatiedot($tulos->lisatiedot);
             $syote->setHenkilo_id($tulos->henkilo_id);
             $syote->setProjekti_id($tulos->projekti_id);
+            $syote->setProjekti_nimi($tulos->nimi);
+            $syote->setHenkilo_nimi();
 
             $tulokset[] = $syote;
         }
         return $tulokset;
     }
 
-    public static function lisaaSyoteKantaan() {
-        $sql = "INSERT INTO tyosyote(kuvaus, lisatiedot, paiva, kesto, henkilo_id, projekti_id) VALUES(?,?,?,?,?,?) RETURNING id";
+//    syotteen poisto
+    public static function poistaSyote($syote_id) {
+        $sql = "DELETE FROM tyosyote WHERE syote_id =?";
         $kysely = getTietokantayhteys()->prepare($sql);
-        $ok = $kysely->execute(array($this->getKuvaus(), $this->getLisatiedot(), $this->getPaiva(), $this->getKesto(), $this->getHenkilo_id(), $this->getProjekti_id()));
-        if ($ok) {
-            $this->syote_id = $kysely->fetchColumn();
+        $kysely->execute(array($syote_id));
+    }
+
+//    työsyötteen tietojen muokkaus
+    public static function muokkaaSyotetta($kuvaus, $lisatiedot, $paiva, $kesto, $syote_id) {
+        $sql = "UPDATE tyosyote SET kuvaus=?, lisatiedot=?, paiva=?, kesto=? WHERE syote_id =?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($kuvaus, $lisatiedot, $paiva, $kesto, $syote_id));
+    }
+
+//    syötteen lisäys kantaan
+    public static function lisaaSyoteKantaan($kuvaus, $lisatiedot, $paiva, $kesto, $henkilo_id, $projekti_id) {
+
+        $virheet = array();
+
+        if (empty($kuvaus)) {
+            $virheet[] = "Työtehtävä ei saa olla tyhjä.";
+        } else if (strlen($kuvaus) > 80) {
+            $virheet[] = "Työtehtävä saa olla enintään 80 merkkiä pitkä, annetun tekstin pituus oli " . strlen($kuvaus) . ".";
         }
-        return $ok;
+
+        if (empty($kesto)) {
+            $virheet[] = "Kesto ei saa olla tyhjä.";
+        } else if (!is_numeric($kesto)) {
+            $virheet[] = "kesto pitää antaa lukuna.";
+        }
+        if (empty($paiva)) {
+            $virheet[] = "Päivä ei saa olla tyhjä.";
+        }
+
+        if (empty($virheet)) {
+            $sql = "INSERT INTO tyosyote(kuvaus, lisatiedot, paiva, kesto, henkilo_id, projekti_id) VALUES(?,?,?,?,?,?)";
+            $kysely = getTietokantayhteys()->prepare($sql);
+            $ok = $kysely->execute(array($kuvaus, $lisatiedot, $paiva, $kesto, $henkilo_id, $projekti_id));
+        } else {
+            return $virheet;
+        }
     }
 
-    public static function onkoKelvollinen() {
-        return empty($this->virheet);
+//    projektin merkintöjen yhteenlaskettu tuntimäärä
+    public static function etsiProjektinTuntimaara($projekti_id) {
+        $sql = "SELECT sum(kesto) FROM tyosyote WHERE projekti_id = ?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($projekti_id));
+        return $kysely->fetchColumn();
     }
 
-//        if (!is_date($tyoSyote->getPaiva())) {
-//            $virheet['paiva'] = "Päivä pitää olla muodossa vuosi - kk - päivä";
-//        }
-//        if (trim($tyoSyote->getKuvaus()) == '') {
-//            $this->virheet['kuvaus'] = "Kuvaus ei saa olla tyhjä.";
-//        }
-//        if (!is_numeric($kesto)) {
-//            $this->virheet['kesto'] = "Syöteen pitää olla numero, max 1 desimaali";
-//        } else if ($kesto <= 0) {
-//            $this->virheet['kesto'] = "Keston pitää olla positiivinen luku.";
-//        }
+//    projektin tuntimerkintöjen lukumäärä
+    public static function etsiProjektinSyoteMaara($projekti_id) {
+        $sql = "SELECT count(syote_id) FROM tyosyote WHERE projekti_id = ?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($projekti_id));
+        return $kysely->fetchColumn();
+    }
+
+    public static function etsiProjektinSyoteenKuvaustenLkm($projekti_id) {
+        $sql = "SELECT count(DISTINCT kuvaus) FROM tyosyote WHERE projekti_id = ?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($projekti_id));
+        return $kysely->fetchColumn();
+    }
+
 }

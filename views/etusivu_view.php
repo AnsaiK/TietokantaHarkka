@@ -10,7 +10,7 @@ require_once 'libs/models/Projekti.php'
     </div>
     <div class="panel-body">
 
-        <table class="table table-striped">
+        <table class="table">
             <thead>
                 <!-- Otsikot -->
                 <tr>
@@ -30,8 +30,10 @@ require_once 'libs/models/Projekti.php'
                         <td><?php echo htmlspecialchars($omatprojektitiedot->getKuvaus()); ?></td>
                         <td>Ei implementoitu</td>
                         <td>Ei implementoitu</td>
-                        <td><button type = "button" class = "btn btn-xs btn-default">Poista projekti</button></td>
-                </tr>
+                        <form action="etusivu.php" method="POST">
+                            <td><button type = "submit" name="poistu" class="btn btn-xs btn-default" value="<?php echo $omatprojektitiedot->getProjekti_id(); ?>">Poistu projektista</button></td>
+                        </form>   
+                    </tr>
             <?php endforeach; ?>
             <!-- Projektin tiedot tietokannasta, loppu -->
             </tbody>
@@ -47,12 +49,11 @@ require_once 'libs/models/Projekti.php'
         <div class="panel-heading" role="tab" id="headingOne">
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Kaikki projektit: <?php echo $data->projektiLkm; ?> kpl</a>
-            </h4>
+                    Liityttävissä olevat projektit</a>
         </div>
         <div id = "collapseOne" class = "panel-collapse collapse in" role = "tabpanel" aria-labelledby = "headingOne">
             <div class = "panel-body">
-                <table class = "table table-striped">
+                <table class = "table">
                     <thead>
                         <!-- Otsikot -->
                         <tr>
@@ -64,16 +65,18 @@ require_once 'libs/models/Projekti.php'
                     </thead>
                     <tbody>
                         <!-- Kaikkien projektien tiedot tietokannasta -->
-                        <?php foreach ($data->kaikkiprojektit as $projektitiedot): ?>
+                        <?php foreach ($data->projektit_ei_liitytty as $projektitiedot): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($projektitiedot->getNimi()); ?></td>
                                 <td><?php echo htmlspecialchars($projektitiedot->getKuvaus()); ?></td>
-                                <td><button type = "button" class = "btn btn-xs btn-default">Liity projektiin</button></td>
+                                <form action="etusivu.php" method="POST">
+                                    <td><button type = "submit" name="liity" class="btn btn-xs btn-default" value="<?php echo $projektitiedot->getProjekti_id(); ?>">Liity projektiin</button></td>
+                                </form>   
                             </tr>
                         <?php endforeach; ?>
                         <!-- Kaikkien projektien tiedot tietokannasta, loppu -->
 
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>

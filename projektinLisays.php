@@ -8,13 +8,13 @@ require_once "libs/tietokantayhteys.php";
 $nimi = $_POST['projektinNimi'];
 $kuvaus = $_POST['projektinKuvaus'];
 
-if (empty($nimi)) {
-    $_SESSION['huomautus'] = "Nimi ei saa olla tyhjä.";
-    header('Location: hallinnointi_projektit.php');
-    exit();
-} else {
-    Projekti::lisaaProjekti($nimi, $kuvaus);
+$virheet = Projekti::lisaaProjekti($nimi, $kuvaus);
+
+if (empty($virheet)) {
     $_SESSION['kuittaus'] = "Projekti lisätty.";
+    header('Location: hallinnointi_projektit.php');
+} else {
+    $_SESSION['huomautus'] = $virheet;
     header('Location: hallinnointi_projektit.php');
 }
 

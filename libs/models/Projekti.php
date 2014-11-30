@@ -5,7 +5,6 @@ class Projekti {
     private $nimi;
     private $kuvaus;
     private $projekti_id;
-    private $virheet = array();
     private $hlomaara;
 
     public function __construct($nimi, $kuvaus, $projekti_id) {
@@ -20,10 +19,6 @@ class Projekti {
 
     public function getKuvaus() {
         return $this->kuvaus;
-    }
-
-    public function getVirheet() {
-        return $this->virheet;
     }
 
     public function getHlomaara() {
@@ -102,6 +97,33 @@ class Projekti {
         return $tulokset;
     }
 
+//    henkilön etusivulla näytettävä lista projekteista, joihin henkilö ei ole liittynyt
+    public static function etsiProjektitJoihinHloEiKuulu($henkilo_id) {
+        $sql = "SELECT p.projekti_id, p.nimi, p.kuvaus FROM projekti p WHERE p.projekti_id NOT IN (SELECT projekti_id FROM osallistuja where henkilo_id = ?)";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id));
+
+        $tulokset = array();
+        foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
+            $projekti = new Projekti();
+            $projekti->setNimi($tulos->nimi);
+            $projekti->setKuvaus($tulos->kuvaus);
+            $projekti->setProjekti_id($tulos->projekti_id);
+
+            $tulokset[] = $projekti;
+        }
+        return $tulokset;
+    }
+
+//    projektien lukumäärä, joihin henkilö on liittynyt 
+    public static function etsiHenkilonProjektitLKm($henkilo_id) {
+        $sql = "SELECT count(projekti_id) FROM osallistuja WHERE henkilo_id = ?)";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute($henkilo_id);
+        return $kysely->fetchColumn();
+    }
+
+//    kaikkien projektien lukumäärä
     public static function etsiProjektienLkm() {
         $sql = "SELECT count(*) from projekti";
         $kysely = getTietokantayhteys()->prepare($sql);
@@ -109,27 +131,36 @@ class Projekti {
         return $kysely->fetchColumn();
     }
 
+//    projektin lisäys
     public static function lisaaProjekti($nimi, $kuvaus) {
-        $sql = "INSERT INTO projekti (nimi, kuvaus) VALUES (?, ?)";
-        $kysely = getTietokantayhteys()->prepare($sql);
-        $kysely->execute(array($nimi, $kuvaus));
-    }
+        $virheet = array();
 
-    public static function onkoKelvollinen() {
-        if (trim($this->nimi) == '') {
-            $this->virheet['nimi'] = "Nimi ei saa olla tyhjä!";
-        } else {
-            unset($this->virheet['nimi']);
+        if (empty($nimi)) {
+            $virheet[] = "Nimi ei saa olla tyhjä.";
+        } else if (strlen($nimi) > 40) {
+            $virheet[] = "Nimi ei saa olla yli 40 merkkiä, pituus oli nyt " . strlen($nimi) . " merkkiä.";
         }
-        return empty($this->virheet);
+        if (strlen($kuvaus) > 80) {
+            $virheet[] = "Kuvaus ei saa olla yli 80 merkkiä, pituus oli nyt " . strlen($kuvaus) . " merkkiä.";
+        }
+
+        if (empty($virheet)) {
+            $sql = "INSERT INTO projekti (nimi, kuvaus) VALUES (?, ?)";
+            $kysely = getTietokantayhteys()->prepare($sql);
+            $kysely->execute(array($nimi, $kuvaus));
+        } else {
+            return $virheet;
+        }
     }
 
+//    projektin poisto
     public static function poistaProjekti($projekti_id) {
         $sql = "DELETE from projekti Where projekti_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id));
     }
 
+//    projektin muokkaus, virheentarkistus kontrollerissa
     public static function muokkaaProjektia($nimi, $kuvaus, $projekti_id) {
         $sql = "UPDATE projekti SET nimi =?, kuvaus =? WHERE projekti_id =?";
         $kysely = getTietokantayhteys()->prepare($sql);
@@ -144,7 +175,7 @@ class Projekti {
     }
 
     public static function etsiKaikkiProjektitJaHloLkm() {
-        $sql = "SELECT projekti.nimi, projekti.kuvaus, projekti.projekti_id, COUNT(osallistuja.henkilo_id) as maara FROM projekti LEFT JOIN osallistuja ON projekti.projekti_id = osallistuja.projekti_id GROUP BY projekti.nimi, projekti.kuvaus, projekti.projekti_id;";
+        $sql = "SELECT projekti.nimi, projekti.kuvaus, projekti.projekti_id, COUNT(osallistuja.henkilo_id) as maara FROM projekti LEFT JOIN osallistuja ON projekti.projekti_id = osallistuja.projekti_id GROUP BY projekti.nimi, projekti.kuvaus, projekti.projekti_id ORDER BY projekti.nimi ASC;";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute();
 
@@ -160,5 +191,26 @@ class Projekti {
         }
         return $tulokset;
     }
+
+    public static function liitaHloProjektiin($henkilo_id, $projekti_id) {
+        $sql = "INSERT INTO osallistuja (henkilo_id, projekti_id) VALUES (?, ?) ";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id, $projekti_id));
+    }
+
+    public static function poistaHloProjektista($henkilo_id, $projekti_id) {
+        $sql = "DELETE FROM osallistuja WHERE henkilo_id =? AND projekti_id=?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id, $projekti_id));
+    }
+
+    public static function etsiProjektinNimi($projekti_id) {
+        $sql = "SELECT nimi FROM projekti WHERE projekti_id =?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($projekti_id));
+        return $kysely->fetchColumn();
+    }
+    
+    
 
 }

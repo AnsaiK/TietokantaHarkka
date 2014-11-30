@@ -8,7 +8,6 @@ require_once "libs/models/Projekti.php";
 
 $henkilot = Henkilo::etsiKaikkiHenkilot();
 
-
 naytaNakyma('hallinnointi_henkilot_view.php', array(
     'henkilo' => $henkilot
 ));

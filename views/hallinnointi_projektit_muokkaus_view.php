@@ -43,22 +43,22 @@
     </div>
     <div class="panel-body">
         <!-- Table -->
-        <table class="table table-striped">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Projekti</th>
                     <th>Kuvaus</th>
-                    <th>Työntekijöitä</th>
+                    <th>Henkilöitä</th>
                     <th></th>
 
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($data->kaikkiprojektit as $projektit): ?>
+                <?php foreach ($data->projektitJaLkm as $projektit): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($projektit->getNimi()); ?></td>
+                        <td><a href="hallinnointi_projektit.php?id=<?php echo $projektit->getProjekti_id(); ?>#headingTiedot"><?php echo htmlspecialchars($projektit->getNimi()); ?></a></td>
                         <td><?php echo htmlspecialchars($projektit->getKuvaus()); ?></td>
-                        <td>kesken</td>
+                        <td><?php echo $projektit->getHlomaara(); ?></td>
                         <td><div class="btn-group" role="group">
                                 <form action="projektinMuokkausjaPoisto.php" method="POST">
                                     <button type="submit" class="btn btn-default btn-sm" name="muokkaa" value="<?php echo $projektit->getProjekti_id(); ?>"><span></span> Muokkaa</button>
@@ -75,40 +75,35 @@
 
 
 <!--yhden projektin tietojen listaus-->
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<?php if (!empty($data->projektinNimi)): ?>
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingOne">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Projektin tiedot, KESKEN
-                </a>
-            </h4>
+        <div class="panel-heading" role="tab" id="headingTiedot">
+            <h4 class="panel-title"><?php echo $data->projektinNimi; ?></h4>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-            <div class="panel-body">
-                <table class="table table-striped">                       
-                    <thead>                          
-                        <tr>  
-                            <th>Henkilö</th>
-                            <th>työtehtävä</th>
-                            <th>päivä</th>
-                            <th>Tunnit</th>
-                            <th>lisätietoja</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <div class="panel-body">
+            <table class="table ">                       
+                <thead>                          
+                    <tr>  
+                        <th>Nimi</th>
+                        <th>työtehtävä</th>
+                        <th>päivä</th>
+                        <th>Tunnit</th>
+                        <th>lisätietoja</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($data->projektinSyotteet as $syote): ?>
                         <tr>               
-                            <td>Kesken</td>
-                            <td>Kesken</td>
-                            <td>Kesken</td>
-                            <td>Kesken</td>
-                            <td></td> 
+                            <td><?php echo $syote->getHenkilo_nimi(); ?></td>
+                            <td><?php echo $syote->getKuvaus(); ?></td>
+                            <td><?php echo $syote->getPaiva(); ?></td>
+                            <td><?php echo $syote->getKesto(); ?></td>
+                            <td><?php echo $syote->getLisatiedot(); ?></td> 
                         </tr>
-
-                    </tbody>
-                </table>
-            </div>  
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
+<?php endif; ?>
 <!--yhden projektin tietojen listaus-->

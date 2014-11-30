@@ -3,8 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/Anssi/Tsoha/index.php</file>
-            <file>file:/Users/Anssi/Tsoha/esittelysivu.html</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/hallinnointi_projektit_view.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/models/Tyosyote.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/sql/create-tables.sql</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/common.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/hallinnointi_projektit.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/pohja.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/projektinLisays.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/models/Projekti.php</file>
         </group>
     </open-files>
 </project-private>

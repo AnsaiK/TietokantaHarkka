@@ -32,10 +32,13 @@
                 <?php if (!empty($data->virhe)): ?>
                     <div class="alert alert-danger"><?php echo $data->virhe; ?></div>
                 <?php endif; ?>
+                                    <?php if (!empty($data->kuittaus)): ?>
+                    <div class="alert alert-success"><?php echo $data->kuittaus; ?></div>
+                <?php endif; ?>
                 <!--virheilmoitus, loppu-->
                 <div class="row">
                     <div class="col-xs-12">
-                        Ei tunnuksia? <a href="logon.html">Kirjaudu tästä.</a>
+                        Ei tunnuksia? <a href="rekisterointi.php">Rekisteröidy tästä.</a>
                     </div>
                 </div>
             </form>           
