@@ -13,13 +13,13 @@
             </div>
             <div class="row">
                 <div class="col-xs-4"><input class="form-control" type="text" name ="tehtava" placeholder="Työtehtävä" value="<?php echo htmlspecialchars($data->uusiSyote->getKuvaus()); ?>"></div>
-                <div class="col-xs-2"><input class="form-control" type="date" name ="paiva" placeholder="<?php echo date('d-m-Y')?>" value="<?php echo $data->uusiSyote->getPaiva(); ?>"></div>
+                <div class="col-xs-2"><input class="form-control" type="text" name ="paiva" placeholder="<?php echo date('d-m-Y')?>" value="<?php echo $data->uusiSyote->getPaiva(); ?>"></div>
                 <div class="col-xs-2"><input class="form-control" type="text" name ="kesto" placeholder="2" value="<?php echo $data->uusiSyote->getKesto(); ?>"></div>
                 <div class="col-xs-4"><input class="form-control" type="text" name ="lisatiedot" placeholder="Lisätietoja" value="<?php echo htmlspecialchars($data->uusiSyote->getLisatiedot()); ?>"></div>
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <br>z
+                    <br>
                     <button type="submit" class="btn btn-default" name="lisaa" value="<?php echo '2' ?>">Lisää tiedot</button>
                 </div>
             </div>
@@ -31,7 +31,7 @@
 
 <!--Henkilön projektin työsyötteet-->
 <div class="panel panel-default">
-    <div class="panel-heading"><h4 class="panel-title">Projektin tiedot</h4></div>
+    <div class="panel-heading"><h4 class="panel-title">Projektin tiedot: <?php echo $data->projektinNimi; ?></h4></div>
     <div class="panel-body">
         <table class="table table-striped">                       
             <thead>                          

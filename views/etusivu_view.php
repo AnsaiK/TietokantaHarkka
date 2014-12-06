@@ -1,6 +1,4 @@
-<?php
-require_once 'libs/models/Projekti.php'
-?>
+ 
 
 <!-- Omat projektit -->
 <div class="panel panel-default">
@@ -9,15 +7,14 @@ require_once 'libs/models/Projekti.php'
         </h4>
     </div>
     <div class="panel-body">
-
         <table class="table">
             <thead>
                 <!-- Otsikot -->
                 <tr>
-                    <th>Projekti</th>
-                    <th>Kuvaus</th>
-                    <th>Tunnit</th>
-                    <th>Viimeinen merkintä</th>
+                    <th><a href="etusivu.php?sort=nimi">Projekti <span class ="glyphicon glyphicon-sort-by-alphabet"></span></a></th>
+                    <th><a href="etusivu.php?sort=kuvaus">Kuvaus <span class ="glyphicon glyphicon-sort-by-alphabet"></span></a></th>
+                    <th><a href="etusivu.php?sort=kesto">Tunnit <span class ="glyphicon glyphicon-sort-by-order-alt"></span></a></th>
+                    <th> <a href="etusivu.php?sort=lkm">Merkintöjä <span class ="glyphicon glyphicon-sort-by-order-alt"></span></a></th>
                     <th></th>
                 </tr>
                 <!-- Otsikot loppu -->
@@ -26,12 +23,12 @@ require_once 'libs/models/Projekti.php'
                 <!-- Projektin tiedot tietokannasta -->
                 <?php foreach ($data->omatprojektit as $omatprojektitiedot): ?>
                     <tr>
-                        <td><a href="projekti.php?id=<?php echo $omatprojektitiedot->getProjekti_id(); ?>"><?php echo htmlspecialchars($omatprojektitiedot->getNimi()); ?></a></td>
-                        <td><?php echo htmlspecialchars($omatprojektitiedot->getKuvaus()); ?></td>
-                        <td>Ei implementoitu</td>
-                        <td>Ei implementoitu</td>
+                        <td><a href="projekti.php?id=<?php echo $omatprojektitiedot[0]; ?>"><?php echo htmlspecialchars($omatprojektitiedot[1]); ?></a></td>
+                        <td><?php echo $omatprojektitiedot[2]; ?></td>
+                        <td><?php echo $omatprojektitiedot[3]; ?></td>
+                        <td><?php echo $omatprojektitiedot[4]; ?></td>
                         <form action="etusivu.php" method="POST">
-                            <td><button type = "submit" name="poistu" class="btn btn-xs btn-default" value="<?php echo $omatprojektitiedot->getProjekti_id(); ?>">Poistu projektista</button></td>
+                            <td><button type = "submit" name="poistu" class="btn btn-xs btn-default" value="<?php echo $omatprojektitiedot[0]; ?>">Poistu projektista</button></td>
                         </form>   
                     </tr>
             <?php endforeach; ?>
@@ -43,7 +40,7 @@ require_once 'libs/models/Projekti.php'
 <!-- Omat projektit loppu-->
 
 
-<!-- Kaikki projektit, collapsible panel-->        
+<!-- Kaikki projektit, joihin ei olla liitytty, collapsible panel-->        
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="headingOne">
@@ -64,7 +61,7 @@ require_once 'libs/models/Projekti.php'
                         <!-- Otsikot loppu -->
                     </thead>
                     <tbody>
-                        <!-- Kaikkien projektien tiedot tietokannasta -->
+                        <!-- projektien tiedot tietokannasta -->
                         <?php foreach ($data->projektit_ei_liitytty as $projektitiedot): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($projektitiedot->getNimi()); ?></td>
@@ -74,7 +71,7 @@ require_once 'libs/models/Projekti.php'
                                 </form>   
                             </tr>
                         <?php endforeach; ?>
-                        <!-- Kaikkien projektien tiedot tietokannasta, loppu -->
+                        <!-- projektien tiedot tietokannasta, loppu -->
 
                         </tbody>
                 </table>
@@ -82,6 +79,6 @@ require_once 'libs/models/Projekti.php'
         </div>
     </div>
 </div>
-<!-- Kaikki projektit loppu, collapsible panel-->        
+<!-- Kaikki projektit, joihin ei olla liitytty loppu, collapsible panel-->        
 
 

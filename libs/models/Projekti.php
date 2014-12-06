@@ -80,26 +80,40 @@ class Projekti {
         return $projekti;
     }
 
-    public static function etsiHenkilonProjektit($henkilo_id) {
-        $sql = "SELECT p.projekti_id, p.nimi, p.kuvaus FROM projekti p WHERE p.projekti_id IN (SELECT projekti_id FROM osallistuja where henkilo_id = ?)";
+    public static function etsiHenkilonProjektit($henkilo_id, $jarjestys) {
+        $jarjesta = "";
+
+        if ($jarjestys == "kuvaus") {
+            $jarjesta = "kuvaus";
+        } else if ($jarjestys == 'kesto') {
+            $jarjesta = 'kesto DESC';
+        } else if ($jarjestys == 'lkm') {
+            $jarjesta = 'lkm DESC';
+        } else {
+            $jarjesta = 'nimi';
+        }
+        
+        $sql = "SELECT projekti.nimi, osallistuja.projekti_id, projekti.kuvaus, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM projekti RIGHT JOIN osallistuja on projekti.projekti_id = osallistuja.projekti_id LEFT JOIN tyosyote on osallistuja.henkilo_id = tyosyote.henkilo_id and osallistuja.projekti_id = tyosyote.projekti_id WHERE osallistuja.henkilo_id = ? group by projekti.nimi, projekti.kuvaus, osallistuja.projekti_id ORDER BY $jarjesta";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
 
         $tulokset = array();
         foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
-            $projekti = new Projekti();
-            $projekti->setNimi($tulos->nimi);
-            $projekti->setKuvaus($tulos->kuvaus);
-            $projekti->setProjekti_id($tulos->projekti_id);
+            $tiedot = array();
+            $tiedot[0] = $tulos->projekti_id;
+            $tiedot[1] = $tulos->nimi;
+            $tiedot[2] = $tulos->kuvaus;
+            $tiedot[3] = $tulos->kesto;
+            $tiedot[4] = $tulos->lkm;
 
-            $tulokset[] = $projekti;
+            $tulokset[] = $tiedot;
         }
         return $tulokset;
     }
 
 //    henkilön etusivulla näytettävä lista projekteista, joihin henkilö ei ole liittynyt
     public static function etsiProjektitJoihinHloEiKuulu($henkilo_id) {
-        $sql = "SELECT p.projekti_id, p.nimi, p.kuvaus FROM projekti p WHERE p.projekti_id NOT IN (SELECT projekti_id FROM osallistuja where henkilo_id = ?)";
+        $sql = "SELECT p.projekti_id, p.nimi, p.kuvaus FROM projekti p WHERE p.projekti_id NOT IN (SELECT projekti_id FROM osallistuja where henkilo_id = ?) ORDER BY nimi";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
 
@@ -160,11 +174,26 @@ class Projekti {
         $kysely->execute(array($projekti_id));
     }
 
-//    projektin muokkaus, virheentarkistus kontrollerissa
+//    projektin muokkaus
     public static function muokkaaProjektia($nimi, $kuvaus, $projekti_id) {
-        $sql = "UPDATE projekti SET nimi =?, kuvaus =? WHERE projekti_id =?";
-        $kysely = getTietokantayhteys()->prepare($sql);
-        $kysely->execute(array($nimi, $kuvaus, $projekti_id));
+        $virheet = array();
+
+        if (empty($nimi)) {
+            $virheet[] = "Nimi ei saa olla tyhjä.";
+        } else if (strlen($nimi) > 40) {
+            $virheet[] = "Nimi ei saa olla yli 40 merkkiä, pituus oli nyt " . strlen($nimi) . " merkkiä.";
+        }
+        if (strlen($kuvaus) > 80) {
+            $virheet[] = "Kuvaus ei saa olla yli 80 merkkiä, pituus oli nyt " . strlen($kuvaus) . " merkkiä.";
+        }
+
+        if (empty($virheet)) {
+            $sql = "UPDATE projekti SET nimi =?, kuvaus =? WHERE projekti_id =?";
+            $kysely = getTietokantayhteys()->prepare($sql);
+            $kysely->execute(array($nimi, $kuvaus, $projekti_id));
+        } else {
+            return $virheet;
+        }
     }
 
     public static function etsiProjektinHenkilomaara($projekti_id) {
@@ -175,7 +204,7 @@ class Projekti {
     }
 
     public static function etsiKaikkiProjektitJaHloLkm() {
-        $sql = "SELECT projekti.nimi, projekti.kuvaus, projekti.projekti_id, COUNT(osallistuja.henkilo_id) as maara FROM projekti LEFT JOIN osallistuja ON projekti.projekti_id = osallistuja.projekti_id GROUP BY projekti.nimi, projekti.kuvaus, projekti.projekti_id ORDER BY projekti.nimi ASC;";
+        $sql = "SELECT projekti.nimi, projekti.kuvaus, projekti.projekti_id, COUNT(osallistuja.henkilo_id) as maara FROM projekti LEFT JOIN osallistuja ON projekti.projekti_id = osallistuja.projekti_id GROUP BY projekti.nimi, projekti.kuvaus, projekti.projekti_id ORDER BY projekti.nimi ASC";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute();
 
@@ -210,7 +239,21 @@ class Projekti {
         $kysely->execute(array($projekti_id));
         return $kysely->fetchColumn();
     }
-    
-    
+
+//    Projektinhallinnan projektikohtainen yhtenveto henkilöistä, tunneista ja merkintöjen määristä
+    public static function etsiProjektinHloYhteenVeto($projekti_id) {
+        $sql = "SELECT henkilo.nimi, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM henkilo RIGHT JOIN osallistuja on henkilo.henkilo_id = osallistuja.henkilo_id LEFT JOIN tyosyote on osallistuja.henkilo_id = tyosyote.henkilo_id and osallistuja.projekti_id = tyosyote.projekti_id WHERE osallistuja.projekti_id = ? group by henkilo.nimi ORDER BY kesto";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($projekti_id));
+        $tulokset = array();
+        foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
+            $tiedot = array();
+            $tiedot[1] = $tulos->nimi;
+            $tiedot[2] = $tulos->kesto;
+            $tiedot[3] = $tulos->lkm;
+            $tulokset[] = $tiedot;
+        }
+        return $tulokset;
+    }
 
 }

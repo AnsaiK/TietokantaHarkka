@@ -16,14 +16,14 @@
                         <label class="col-xs-6" for="Kuvaus">Kuvaus</label>                    
                     </div>
                     <div class="row">
-                        <div class="col-xs-6"><input class="form-control" type="text" name ="muokattavaNimi" placeholder="Projektin nimi" value="<?php echo htmlspecialchars($data->muokattavaProjekti->getNimi());?>"></div>
-                        <div class="col-xs-6"><input class="form-control" type="text" name ="muokattavaKuvaus" placeholder="Kuvaus" value="<?php echo htmlspecialchars($data->muokattavaProjekti->getKuvaus()); ?>"></div>
+                        <div class="col-xs-6"><input class="form-control" type="text" name ="muokattavaNimi" placeholder="Projektin nimi" value="<?php echo htmlspecialchars($data->muokattavaProjektiNimi);?>"></div>
+                        <div class="col-xs-6"><input class="form-control" type="text" name ="muokattavaKuvaus" placeholder="Kuvaus" value="<?php echo htmlspecialchars($data->muokattavaProjektiKuvaus); ?>"></div>
 
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <br>
-                            <button type="submit" class="btn btn-default" name="vahvista" value="<?php echo $data->muokattavaProjekti->getProjekti_id();?>">Vahvista muokkaukset</button>
+                            <button type="submit" class="btn btn-default" name="vahvista" value="<?php echo $data->muokattavaProjektiId;?>">Vahvista muokkaukset</button>
                             <a href="hallinnointi_projektit.php" button type="submit" class="btn btn-default" name="peruuta">Peruuta</a>
 
                         </div>

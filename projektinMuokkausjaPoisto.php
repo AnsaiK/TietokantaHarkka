@@ -11,8 +11,13 @@ $muokattavaKuvaus = $_POST['muokattavaKuvaus'];
 
 $vahvistamuokkaus_id = $_POST['vahvista'];
 
-//projektin poisto
+$projektiLkm = Projekti::etsiProjektienLkm();
+$projektitJaLkm = Projekti::etsiKaikkiProjektitJaHloLkm();
+
+//projektin poisto 
 if (!empty($poistettava)) {
+    $_SESSION['kuittaus'] = 'Projekti poistettu';
+
     Projekti::poistaProjekti($poistettava);
     header('Location: hallinnointi_projektit.php');
     exit();
@@ -20,24 +25,44 @@ if (!empty($poistettava)) {
 
 //ohjaa muokkausnäkymään
 if (!empty($muokattava)) {
-
-    $projektiLkm = Projekti::etsiProjektienLkm();
-$projektitJaLkm = Projekti::etsiKaikkiProjektitJaHloLkm();
     $muokattavaProjekti = Projekti::etsiProjekti($muokattava);
 
     naytaNakyma("hallinnointi_projektit_muokkaus_view.php", array(
         'projektitJaLkm' => $projektitJaLkm,
         'projektiLkm' => $projektiLkm,
-        'muokattavaProjekti' => $muokattavaProjekti
+        'muokattavaProjektiNimi' => $muokattavaProjekti->getNimi(),
+        'muokattavaProjektiKuvaus' => $muokattavaProjekti->getKuvaus(),
+        'muokattavaProjektiId' => $muokattavaProjekti->getProjekti_id()
     ));
     exit();
 }
 
 //vahvistaa muokkauksen
 if (!empty($vahvistamuokkaus_id)) {
-    Projekti::muokkaaProjektia($muokattavaNimi, $muokattavaKuvaus, $vahvistamuokkaus_id);
-    $_SESSION['kuittaus'] = 'Muutokset tallennettu';
-    header('Location: hallinnointi_projektit.php');
+
+    $virheet = Projekti::muokkaaProjektia($muokattavaNimi, $muokattavaKuvaus, $vahvistamuokkaus_id);
+
+    if (empty($virheet)) {
+        $_SESSION['kuittaus'] = 'Muutokset tallennettu';
+        header('Location: hallinnointi_projektit.php');
+        exit();
+
+        //virhetilanteen kontrollointi
+    } else {
+        $_SESSION['huomautus'] = $virheet;
+
+        naytaNakyma("hallinnointi_projektit_muokkaus_view.php", array(
+            'projektitJaLkm' => $projektitJaLkm,
+            'projektiLkm' => $projektiLkm,
+            'muokattavaProjektiNimi' => $muokattavaNimi,
+            'muokattavaProjektiKuvaus' => $muokattavaKuvaus,
+            'muokattavaProjektiId' => $vahvistamuokkaus_id
+        ));
+        exit();
+    }
 }
+    
 
 
+
+  

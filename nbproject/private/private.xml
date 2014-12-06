@@ -5,11 +5,11 @@
         <group>
             <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/hallinnointi_projektit_view.php</file>
             <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/models/Tyosyote.php</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/sql/create-tables.sql</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/common.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/projekti.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/etusivu.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/projekti_view.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/etusivu_view.php</file>
             <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/hallinnointi_projektit.php</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/pohja.php</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/projektinLisays.php</file>
             <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/models/Projekti.php</file>
         </group>
     </open-files>

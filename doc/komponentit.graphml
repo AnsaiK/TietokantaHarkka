@@ -139,7 +139,7 @@ projekti_muokkaus_view.php
           <y:Geometry height="102.00000000000006" width="239.99999999999994" x="-228.5107421874999" y="590.3701171875001"/>
           <y:Fill color="#CCFFFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="32.265625" modelName="custom" textColor="#000000" visible="true" width="227.119140625" x="6.440429687499972" y="34.8671875">Projektin tuntimrekinnän poisto
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="32.265625" modelName="custom" textColor="#000000" visible="true" width="227.119140625" x="6.440429687499972" y="34.8671875">Projektin tuntimerkinnän poisto
 (projektinSyoteMuokkausjaPoisto.php)<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
@@ -304,7 +304,7 @@ hallinnointi_henkilonTiedot_view.php
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="760.0415039062499" x="362.18701171875006" y="999.9638671874998"/>
+          <y:Geometry height="30.0" width="760.0415039062499" x="362.18701171875006" y="959.9638671874998"/>
           <y:Fill color="#FFCC99" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="186.888671875" x="286.576416015625" y="5.93359375">Hallinto-oikeudet vaativat sivut<y:LabelModel>
@@ -322,7 +322,7 @@ hallinnointi_henkilonTiedot_view.php
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="536.9999999999999" x="-228.5107421874999" y="999.9638671874998"/>
+          <y:Geometry height="30.0" width="536.9999999999999" x="-228.5107421874999" y="959.9638671874998"/>
           <y:Fill color="#CCFFFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="147.173828125" x="194.91308593749994" y="5.93359375">tavallisen käyttäjän sivut<y:LabelModel>

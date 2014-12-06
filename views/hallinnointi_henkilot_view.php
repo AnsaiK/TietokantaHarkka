@@ -13,6 +13,10 @@
                 <?php foreach ($data->henkilo as $henkiloNyt): ?>
                     <tr>               
                         <td><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $henkiloNyt->getHenkilo_id(); ?>"><?php echo htmlspecialchars($henkiloNyt->getNimi()); ?></a></td>
+                        <?php if (isset($_SESSION['admin'])): ?>   
+                        <td>onko admin</td>
+                            <td><button type = "button" name="admin" class="btn btn-xs btn-default" value="">Tee Adminiksi</button></td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

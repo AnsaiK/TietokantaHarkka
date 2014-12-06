@@ -6,7 +6,8 @@ CREATE TABLE henkilo(
 );
 
 CREATE TABLE vastuuhenkilo(
-        henkilo_id serial PRIMARY KEY REFERENCES henkilo ON DELETE CASCADE 
+        henkilo_id serial PRIMARY KEY REFERENCES henkilo ON DELETE CASCADE,
+	paakayttaja boolean
 );
 
 CREATE TABLE projekti(
