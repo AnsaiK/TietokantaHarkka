@@ -92,7 +92,7 @@ class Projekti {
         } else {
             $jarjesta = 'nimi';
         }
-        
+
         $sql = "SELECT projekti.nimi, osallistuja.projekti_id, projekti.kuvaus, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM projekti RIGHT JOIN osallistuja on projekti.projekti_id = osallistuja.projekti_id LEFT JOIN tyosyote on osallistuja.henkilo_id = tyosyote.henkilo_id and osallistuja.projekti_id = tyosyote.projekti_id WHERE osallistuja.henkilo_id = ? group by projekti.nimi, projekti.kuvaus, osallistuja.projekti_id ORDER BY $jarjesta";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
@@ -130,10 +130,10 @@ class Projekti {
     }
 
 //    projektien lukumäärä, joihin henkilö on liittynyt 
-    public static function etsiHenkilonProjektitLKm($henkilo_id) {
-        $sql = "SELECT count(projekti_id) FROM osallistuja WHERE henkilo_id = ?)";
+    public static function etsiHenkilonProjektiLKm($henkilo_id) {
+        $sql = "SELECT count(projekti_id) FROM osallistuja WHERE henkilo_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);
-        $kysely->execute($henkilo_id);
+        $kysely->execute(array($henkilo_id));
         return $kysely->fetchColumn();
     }
 
@@ -157,6 +157,9 @@ class Projekti {
         if (strlen($kuvaus) > 80) {
             $virheet[] = "Kuvaus ei saa olla yli 80 merkkiä, pituus oli nyt " . strlen($kuvaus) . " merkkiä.";
         }
+        if (Projekti::onkoProjektinNimiOlemassa($nimi)) {
+            $virheet[] = "Samalla nimellä on jo olemassa projekti.";
+        }
 
         if (empty($virheet)) {
             $sql = "INSERT INTO projekti (nimi, kuvaus) VALUES (?, ?)";
@@ -164,6 +167,20 @@ class Projekti {
             $kysely->execute(array($nimi, $kuvaus));
         } else {
             return $virheet;
+        }
+    }
+
+    public static function onkoProjektinNimiOlemassa($nimi) {
+        $sql = "SELECT nimi from projekti Where nimi = ? LIMIT 1;";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($nimi));
+
+        $tulos = $kysely->fetchObject();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return $tulos;
         }
     }
 
@@ -240,15 +257,32 @@ class Projekti {
         return $kysely->fetchColumn();
     }
 
-//    Projektinhallinnan projektikohtainen yhtenveto henkilöistä, tunneista ja merkintöjen määristä
-    public static function etsiProjektinHloYhteenVeto($projekti_id) {
-        $sql = "SELECT henkilo.nimi, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM henkilo RIGHT JOIN osallistuja on henkilo.henkilo_id = osallistuja.henkilo_id LEFT JOIN tyosyote on osallistuja.henkilo_id = tyosyote.henkilo_id and osallistuja.projekti_id = tyosyote.projekti_id WHERE osallistuja.projekti_id = ? group by henkilo.nimi ORDER BY kesto";
+//    hallinnointi_projektit.php - projektikohtainen yhtenveto henkilöistä, tunneista ja merkintöjen määristä
+    public static function etsiProjektinYhteenVetoHenkiloille($projekti_id) {
+        $sql = "SELECT henkilo.henkilo_id, henkilo.nimi, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM henkilo RIGHT JOIN osallistuja on henkilo.henkilo_id = osallistuja.henkilo_id LEFT JOIN tyosyote on osallistuja.henkilo_id = tyosyote.henkilo_id and osallistuja.projekti_id = tyosyote.projekti_id WHERE osallistuja.projekti_id = ? GROUP BY henkilo.nimi, henkilo.henkilo_id ORDER BY kesto";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id));
         $tulokset = array();
         foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
             $tiedot = array();
+            $tiedot[0] = $tulos->henkilo_id;
             $tiedot[1] = $tulos->nimi;
+            $tiedot[2] = $tulos->kesto;
+            $tiedot[3] = $tulos->lkm;
+            $tulokset[] = $tiedot;
+        }
+        return $tulokset;
+    }
+
+    public static function etsiHenkilonProjektienYhteenVeto($henkilo_id) {
+        $sql = "SELECT projekti.nimi, projekti.kuvaus, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM projekti RIGHT JOIN osallistuja on projekti.projekti_id = osallistuja.projekti_id LEFT JOIN tyosyote on osallistuja.projekti_id = tyosyote.projekti_id and osallistuja.henkilo_id = tyosyote.henkilo_id WHERE osallistuja.henkilo_id = ? GROUP BY projekti.nimi, projekti.kuvaus ORDER BY projekti.nimi";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id));
+        $tulokset = array();
+        foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
+            $tiedot = array();
+            $tiedot[0] = $tulos->nimi;
+            $tiedot[1] = $tulos->kuvaus;
             $tiedot[2] = $tulos->kesto;
             $tiedot[3] = $tulos->lkm;
             $tulokset[] = $tiedot;

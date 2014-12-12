@@ -1,4 +1,3 @@
- 
 
 <!-- Omat projektit -->
 <div class="panel panel-default">
@@ -81,4 +80,7 @@
 </div>
 <!-- Kaikki projektit, joihin ei olla liitytty loppu, collapsible panel-->        
 
+<ol class="breadcrumb">
+        <li class="active">Home: <?php echo htmlspecialchars($_SESSION['nimi']) ?></li>
+</ol>
 
