@@ -7,6 +7,7 @@ class Henkilo {
     private $kayttajatunnus;
     private $salasana;
     private $vastuuhenkilo;
+    private $admin;
 
     public function __construct($henkilo_id, $nimi, $kayttajatunnus, $salasana) {
         $this->henkilo_id = $henkilo_id;
@@ -35,6 +36,14 @@ class Henkilo {
         return $this->vastuuhenkilo;
     }
 
+    function getAdmin() {
+        return $this->admin;
+    }
+
+    function setAdmin($admin) {
+        $this->admin = $admin;
+    }
+
     public function setVastuuhenkilo($vastuuhenkilo) {
         $this->vastuuhenkilo = $vastuuhenkilo;
     }
@@ -56,7 +65,7 @@ class Henkilo {
     }
 
     public function etsiKaikkiHenkilot() {
-        $sql = 'SELECT henkilo_id, nimi, kayttajatunnus, salasana FROM henkilo';
+        $sql = 'SELECT henkilo_id, nimi, kayttajatunnus, salasana FROM henkilo order by nimi';
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute();
 
@@ -64,11 +73,12 @@ class Henkilo {
         foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
 
             $henkilo = new Henkilo();
-            $henkilo->henkilo_id = $tulos->id;
+            $henkilo->henkilo_id = $tulos->henkilo_id;
             $henkilo->nimi = $tulos->nimi;
             $henkilo->kayttajatunnus = $tulos->kayttajatunnus;
             $henkilo->salasana = $tulos->salasana;
-            $henkilo->vastuuhenkilo = Henkilo::onkoVastuuhenkilo($tulos->id);
+            $henkilo->vastuuhenkilo = Henkilo::onkoVastuuhenkilo($tulos->henkilo_id);
+            $henkilo->admin = Henkilo::onkoKayttajaAdmin($tulos->henkilo_id);
             $tulokset[] = $henkilo;
         }
         return $tulokset;
@@ -117,6 +127,19 @@ class Henkilo {
         }
     }
 
+    public static function onkoKayttajaAdmin($henkilo_id) {
+        $sql = "SELECT henkilo_id FROM vastuuhenkilo WHERE henkilo_id = ? and paakayttaja = true";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id));
+        $tulos = $kysely->fetchObject();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return $tulos;
+        }
+    }
+
     public static function uusiHenkilo($nimi, $kayttajatunnus, $salasana) {
         $virheet = array();
 
@@ -125,13 +148,15 @@ class Henkilo {
         } else if (strlen($nimi) > 40) {
             $virheet[] = "Nimi saa olla enintään 40 merkkiä pitkä, annetun pituus oli " . strlen($nimi) . ".";
         }
+
         if (empty($kayttajatunnus)) {
             $virheet[] = "Käyttäjätunnus ei saa olla tyhjä";
-        } else if (Henkilo::onkoKayttajatunnusVapaa($kayttajatunnus)) {
-            $virheet[] = "Käyttäjätunnus " . $kayttajatunnus . " ei ole vapaa.";
         } else if (strlen($kayttajatunnus) > 15) {
             $virheet[] = "Käyttäjätunnus olla saa enintään 15 merkkiä pitkä, nyt pituus on " . strlen($kayttajatunnus);
+        } else if (Henkilo::onkoKayttajatunnusVapaa($kayttajatunnus)) {
+            $virheet[] = "Käyttäjätunnus " . $kayttajatunnus . " ei ole vapaa.";
         }
+
 
         if (empty($salasana)) {
             $virheet[] = "Salasana ei saa olla tyhjä";
@@ -143,7 +168,6 @@ class Henkilo {
             $sql = "INSERT INTO henkilo (nimi, kayttajatunnus, salasana) VALUES (?,?,?)";
             $kysely = getTietokantayhteys()->prepare($sql);
             $kysely->execute(array($nimi, $kayttajatunnus, $salasana));
-            $tulos = $kysely->fetchObject();
         } else {
             return $virheet;
         }
@@ -165,32 +189,16 @@ class Henkilo {
         }
     }
 
-    public static function onkoKayttajaAdmin($henkilo_id) {
-        $sql = "SELECT henkilo_id FROM vastuuhenkilo WHERE henkilo_id = ? and paakayttaja = true";
+    public static function lisaaVastuuhenkilo($henkilo_id) {
+        $sql = "INSERT INTO vastuuhenkilo (henkilo_id) VALUES (?)";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
-        $tulos = $kysely->fetchObject();
-
-        if ($tulos == null) {
-            return null;
-        } else {
-            return $tulos;
-        }
     }
 
-    public static function henkiloListaus() {
-        $sql = "select henkilo.nimi, henkilo.henkilo_id, vastuuhenkilo.henkilo_id as vastuuhenkilo from henkilo left join vastuuhenkilo on henkilo.henkilo_id = vastuuhenkilo.henkilo_id group by henkilo.nimi, henkilo.henkilo_id, vastuuhenkilo.henkilo_id ORDER BY nimi";
+    public static function poistaVastuuhenkilo($henkilo_id) {
+        $sql = "DELETE from vastuuhenkilo WHERE henkilo_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);
-        $kysely->execute(array());
-        $tulokset = array();
-        foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
-            $tiedot = array();
-            $tiedot[1] = $tulos->nimi;
-            $tiedot[0] = $tulos->henkilo_id;
-            $tiedot[2] = $tulos->vastuuhenkilo;
-            $tulokset[] = $tiedot;
-        }
-        return $tulokset;
+        $kysely->execute(array($henkilo_id));
     }
+
 }
-    

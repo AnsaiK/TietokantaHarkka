@@ -14,32 +14,45 @@ if (!isset($_SESSION['vastuuhenkilo'])) {
             <thead>
                 <tr>
                     <th>Henkilö</th>
-                    <th>Status</th>
-                    <th></th>
-
+                    <?php if (isset($_SESSION['admin'])) : ?>
+                        <th>Oikeudet</th>
+                        <th>Muokkaa: vastuuhenkilö</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
+
             <tbody>
-                <?php foreach ($data->listaus as $hlo): ?>
+                <?php foreach ($data->henkilo as $hlo): ?>
                     <tr>               
-                        <td><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $hlo[0]; ?>"><?php echo $hlo[1]; ?></a></td>
+                        <td><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $hlo->getHenkilo_id(); ?>"><?php echo $hlo->getNimi(); ?></a></td>
                         <?php if (isset($_SESSION['admin'])) : ?>
-                            <?php if (empty($hlo[2])): ?> 
-                                <td>käyttäjä</td>
-                                <td class ="btn-group" role="group">
-                                    <button type="submit" class="btn btn-success btn-sm" name="muokkaa" value="">Lisää <span class="glyphicon glyphicon-ok"></span></button>
-                                    <button type="button" class="btn disabled btn-sm" name="muokkaa" value="">Poista <span class="glyphicon glyphicon-remove"></span></button>
+                            <?php if ($hlo->getAdmin()): ?> 
+                                <td>Admin</td>
+                                <td class ="col-xs-2 btn-group" role="group">
+                                    <button type="button" class="btn disabled btn-sm" name="lisaa" value="">Lisää <span class="glyphicon glyphicon-ok"></span></button>
+                                    <button type="button" class="btn disabled btn-sm" name="poista" value="">Poista <span class="glyphicon glyphicon-remove"></span></button>
                                 </td>
-                            <?php else: ?>
+                            <?php elseif ($hlo->getVastuuhenkilo()): ?> 
                                 <td>vastuuhenkilo</td>
-                                <td class ="btn-group" role="group">
-                                    <button type="button" class="btn disabled btn-sm" name="muokkaa" value="">Lisää <span class="glyphicon glyphicon-ok"></span></button>
-                                    <button type="submit" class="btn btn-danger btn-sm" name="muokkaa" value="">Poista <span class="glyphicon glyphicon-remove"></span></button>
+
+                                <td class ="col-xs-2 btn-group" role="group">
+                                    <form action="hallinnointi_henkilot.php" method="POST">
+                                        <button type="submit" class="btn disabled btn-sm" name="lisaa" value="<?php echo $hlo->getHenkilo_id(); ?>">Lisää <span class="glyphicon glyphicon-ok"></span></button>
+                                        <button type="submit" class="btn btn-danger btn-sm" name="poista" value="<?php echo $hlo->getHenkilo_id(); ?>">Poista <span class="glyphicon glyphicon-remove"></span></button>
+                                    </form>    
+                                </td>
+
+                            <?php else: ?>
+                                <td>käyttäjä</td>
+                                <td class ="col-xs-2 btn-group" role="group">
+                                    <form action="hallinnointi_henkilot.php" method="POST">
+                                        <button type="submit" class="btn btn-success btn-sm" name="lisaa" value="<?php echo $hlo->getHenkilo_id(); ?>">Lisää <span class="glyphicon glyphicon-ok"></span></button>
+                                        <button type="submit" class="btn disabled btn-sm" name="poista" value="<?php echo $hlo->getHenkilo_id(); ?>">Poista <span class="glyphicon glyphicon-remove"></span></button>
+                                    </form>    
+
                                 </td>
                             <?php endif; ?>
                         <?php endif; ?>
-
-
                     </tr>
                 <?php endforeach;
                 ?>
