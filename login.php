@@ -19,6 +19,7 @@ if (isset($henkilo)) {
     $_SESSION['henkilo'] = $henkilo;
     $_SESSION['nimi'] = $henkilo->getNimi();
     $_SESSION['henkilo_id'] = $henkilo->getHenkilo_id();
+    $_SESSION['admin'] = Henkilo::onkoKayttajaAdmin($henkilo->getHenkilo_id());
 
     header('Location: etusivu.php');
     

@@ -15,7 +15,6 @@ $lisatieto = $_POST['lisatiedot'];
 
 $lisaa_syote = $_POST['lisaa'];
 
-
 if (!empty($lisaa_syote)) {
     $virheet = Tyosyote::lisaaSyoteKantaan($tehtava, $lisatieto, $paiva, $kesto, $henkilo_id, $projekti_id);
 
@@ -27,13 +26,7 @@ if (!empty($lisaa_syote)) {
         exit();
     } else {
         $_SESSION['huomautus'] = $virheet;
-        header('Location: projekti.php?id=' . $projekti_id);
-//        , array(
-//            'henkilonSyote' => $henkilonMuokatutSyotteet,
-//            'uusiSyote' => new Tyosyote(),
-//            'projektiId' => $projekti_id,
-//            'virhe' => $virheet
-//        ));
+        header('Location: projekti.php?id=' . $projekti_id . '&tehtava=' . $tehtava . '&paiva=' . $paiva . '&kesto=' . $kesto . '&lisatiedot=' . $lisatieto);
     }
 }
 

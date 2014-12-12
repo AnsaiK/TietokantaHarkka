@@ -8,6 +8,10 @@ require_once "libs/models/Tyosyote.php";
 
 $projekti_id = (int) $_GET['id'];
 $jarjestys = $_GET['sort'];
+$ProjektinNimi = $_GET['nimi'];
+$ProjektinKuvaus = $_GET['kuvaus'];
+
+$muokattavaProjekti_id = $_GET['muokkausid'];
 
 $projektiLkm = Projekti::etsiProjektienLkm();
 $projektitJaLkm = Projekti::etsiKaikkiProjektitJaHloLkm();
@@ -20,7 +24,7 @@ if (!empty($projekti_id)) {
     $projektinSyoteMaara = Tyosyote::etsiProjektinSyoteMaara($projekti_id);
     $projektinHloLkm = Projekti::etsiProjektinHenkilomaara($projekti_id);
     $projektinKuvaustenLkm = Tyosyote::etsiProjektinSyoteenKuvaustenLkm($projekti_id);
-    $projektinHloYhteenveto = Projekti::etsiProjektinHloYhteenVeto($projekti_id);
+    $projektinHloYhteenveto = Projekti::etsiProjektinYhteenVetoHenkiloille($projekti_id);
 
     naytaNakyma("hallinnointi_projektit_view.php", array(
         'projektiLkm' => $projektiLkm,
@@ -32,12 +36,46 @@ if (!empty($projekti_id)) {
         'projektinHloLkm' => $projektinHloLkm,
         'projektinKuvaustenLkm' => $projektinKuvaustenLkm,
         'projektinHloYhteenveto' => $projektinHloYhteenveto,
-        'projekti_id' => $projekti_id
+        'projekti_id' => $projekti_id,
+        'listausTaiMuokkaus' => 'hallinnointi_projektit_lisays_view.php'
+    ));
+    exit();
+}
+//else if (!empty($muokattavaProjekti_id) && !isset($_SESSION['virheet'])){
+//
+//    naytaNakyma("hallinnointi_projektit_view.php", array(
+//        'listausTaiMuokkaus' => 'hallinnointi_projektit_muokkaus_view.php',
+//        'projektiLkm' => $projektiLkm,
+//        'projektitJaLkm' => $projektitJaLkm,
+//        'muokattavaNimi' => $ProjektinNimi,
+//        'muokattavaKuvaus' => $ProjektinKuvaus
+//    ));
+//}
+
+//muokkausnäkymän ohjaus
+else if (!empty($muokattavaProjekti_id)) {
+    naytaNakyma("hallinnointi_projektit_view.php", array(
+        'listausTaiMuokkaus' => 'hallinnointi_projektit_muokkaus_view.php',
+        'projektiLkm' => $projektiLkm,
+        'projektitJaLkm' => $projektitJaLkm,
+        'muokattavanProjektinNimi' => $ProjektinNimi,
+        'muokattavanProjektinKuvaus' => $ProjektinKuvaus,
+        'muokattavaProjektiId' => $muokattavaProjekti_id
     ));
     exit();
 }
 
-naytaNakyma("hallinnointi_projektit_view.php", array(
-    'projektiLkm' => $projektiLkm,
-    'projektitJaLkm' => $projektitJaLkm
-));
+
+//lisäysnäkymän ohjaus
+else {
+    naytaNakyma("hallinnointi_projektit_view.php", array(
+        'listausTaiMuokkaus' => 'hallinnointi_projektit_lisays_view.php',
+        'projektiLkm' => $projektiLkm,
+        'projektitJaLkm' => $projektitJaLkm,
+        'lisattavanProjektinNimi' => $ProjektinNimi,
+        'lisattavanProjektinKuvaus' => $ProjektinKuvaus,
+        'muokattavaProjektiId' => $muokattavaProjekti_id
+    ));
+}
+
+
