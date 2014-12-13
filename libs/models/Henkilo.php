@@ -1,5 +1,8 @@
 <?php
+
 require_once "libs/models/Tyosyote.php";
+require_once "libs/models/Projekti.php";
+
 
 class Henkilo {
 
@@ -11,6 +14,7 @@ class Henkilo {
     private $admin;
     private $tunnit;
     private $merkinnat;
+    private $projektiLkm;
 
     public function __construct($henkilo_id, $nimi, $kayttajatunnus, $salasana) {
         $this->henkilo_id = $henkilo_id;
@@ -50,7 +54,16 @@ class Henkilo {
     public function getMerkinnat() {
         return $this->merkinnat;
     }
+    
+    public function getProjektiLkm() {
+        return $this->projektiLkm;
+    }
 
+    public function setProjektiLkm($projektiLkm) {
+        $this->projektiLkm = $projektiLkm;
+    }
+
+    
     public function setTunnit($tunnit) {
         $this->tunnit = $tunnit;
     }
@@ -59,7 +72,6 @@ class Henkilo {
         $this->merkinnat = $merkinnat;
     }
 
-        
     public function setAdmin($admin) {
         $this->admin = $admin;
     }
@@ -101,6 +113,7 @@ class Henkilo {
             $henkilo->admin = Henkilo::onkoKayttajaAdmin($tulos->henkilo_id);
             $henkilo->tunnit = Tyosyote::etsiHenkilonTunnit($tulos->henkilo_id);
             $henkilo->merkinnat = Tyosyote::etsiHenkilonMerkintojenLkm($tulos->henkilo_id);
+            $henkilo->projektiLkm = Projekti::etsiHenkilonProjektiLKm($tulos->henkilo_id);
             $tulokset[] = $henkilo;
         }
         return $tulokset;
@@ -224,16 +237,17 @@ class Henkilo {
     }
 
     public static function etsiHenkilonProjektienYhteenVeto($henkilo_id) {
-        $sql = "SELECT projekti.nimi, projekti.kuvaus, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM projekti RIGHT JOIN osallistuja on projekti.projekti_id = osallistuja.projekti_id LEFT JOIN tyosyote on osallistuja.projekti_id = tyosyote.projekti_id and osallistuja.henkilo_id = tyosyote.henkilo_id WHERE osallistuja.henkilo_id = ? GROUP BY projekti.nimi, projekti.kuvaus ORDER BY projekti.nimi";
+        $sql = "SELECT projekti.nimi, projekti.projekti_id, projekti.kuvaus, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM projekti RIGHT JOIN osallistuja on projekti.projekti_id = osallistuja.projekti_id LEFT JOIN tyosyote on osallistuja.projekti_id = tyosyote.projekti_id and osallistuja.henkilo_id = tyosyote.henkilo_id WHERE osallistuja.henkilo_id = ? GROUP BY projekti.nimi, projekti.kuvaus, projekti.projekti_id ORDER BY projekti.nimi";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
         $tulokset = array();
         foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
             $tiedot = array();
-            $tiedot[0] = $tulos->nimi;
-            $tiedot[1] = $tulos->kuvaus;
-            $tiedot[2] = $tulos->kesto;
-            $tiedot[3] = $tulos->lkm;
+            $tiedot[0] = $tulos->projekti_id;
+            $tiedot[1] = $tulos->nimi;
+            $tiedot[2] = $tulos->kuvaus;
+            $tiedot[3] = $tulos->kesto;
+            $tiedot[4] = $tulos->lkm;
             $tulokset[] = $tiedot;
         }
         return $tulokset;

@@ -23,7 +23,7 @@ if (!empty($projekti_id)) {
     if (empty($filtteroiHenkilo_id)) {
         $projektinSyotteet = Tyosyote::etsiProjektinTyosyotteet($projekti_id, $jarjestys);
     } else {
-        $projektinSyotteet = Tyosyote::etsiProjektinTyosyotteetHenkilolle($projekti_id, $filtteroiHenkilo_id);
+        $projektinSyotteet = Tyosyote::etsiProjektinTyosyotteetHenkilolle($projekti_id, $filtteroiHenkilo_id, $jarjestys);
         $filtteroityHlo = $filtteroiHenkilo_id;
     }
     $projektinNimi = Projekti::etsiProjektinNimi($projekti_id);

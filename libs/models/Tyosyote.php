@@ -14,16 +14,12 @@ class Tyosyote {
     private $henkilo_id;
     private $projekti_id;
 
-    public function __construct($syote_id, $kuvaus, $lisatiedot, $paiva, $kesto, $henkilo_id, $projekti_id, $projekti_nimi, $henkilo_nimi) {
+    public function __construct($syote_id, $kuvaus, $lisatiedot, $paiva, $kesto) {
         $this->syote_id = $syote_id;
         $this->kuvaus = $kuvaus;
         $this->lisatiedot = $lisatiedot;
         $this->paiva = $paiva;
         $this->kesto = $kesto;
-        $this->henkilo_id = $henkilo_id;
-        $this->projekti_id = $projekti_id;
-        $this->projekti_nimi = $projekti_nimi;
-        $this->henkilo_nimi = $henkilo_nimi;
     }
 
     public function getSyote_id() {
@@ -112,25 +108,23 @@ class Tyosyote {
         if ($tulos == null) {
             return null;
         } else {
-            return new Tyosyote($tulos->syote_id, $tulos->kuvaus, $tulos->lisatiedot, $tulos->paiva, $tulos->kesto, $tulos->henkilo_id, $tulos->projekti_id, '', '');
+
+            $syote = new Tyosyote();
+            $syote->setSyote_id($tulos->syote_id);
+            $syote->setKuvaus($tulos->kuvaus);
+            $syote->setLisatiedot($tulos->lisatiedot);
+            $syote->setPaiva($tulos->paiva);
+            $syote->setKesto($tulos->kesto);
+            $syote->setHenkilo_id($tulos->henkilo_id);
+            $syote->setProjekti_id($tulos->projekti_id);
+
+            return $syote;
         }
     }
 
 //    hallinnoinnissa näytettävät henkilön kaikki syötteet
     public static function etsiHenkilonTyosyotteet($henkilo_id, $jarjestys) {
-        $jarjesta = "";
-
-        if ($jarjestys == "lisatiedot") {
-            $jarjesta = "lisatiedot ASC";
-        } else if ($jarjestys == 'kuvaus') {
-            $jarjesta = 'kuvaus';
-        } else if ($jarjestys == 'paiva') {
-            $jarjesta = 'date(paiva) DESC';
-        } else if ($jarjestys == 'kesto') {
-            $jarjesta = 'kesto DESC';
-        } else {
-            $jarjesta = 'nimi';
-        }
+        $jarjesta = Tyosyote::jarjesta($jarjestys);
 
         $sql = "SELECT projekti.nimi, t.syote_id, t.kuvaus, to_char(t.paiva, 'DD/MM/YYYY') as paiva, t.kesto, t.lisatiedot, t.henkilo_id, t.projekti_id FROM tyosyote AS t LEFT JOIN projekti ON projekti.projekti_id = t.projekti_id WHERE t.henkilo_id = ? ORDER BY $jarjesta";
         $kysely = getTietokantayhteys()->prepare($sql);
@@ -156,19 +150,7 @@ class Tyosyote {
 
 //    projektin kaikki syötteet
     public static function etsiProjektinTyosyotteet($projekti_id, $jarjestys) {
-        $jarjesta = "";
-
-        if ($jarjestys == "lisatiedot") {
-            $jarjesta = "lisatiedot ASC";
-        } else if ($jarjestys == 'kuvaus') {
-            $jarjesta = 'kuvaus';
-        } else if ($jarjestys == 'paiva') {
-            $jarjesta = 'date(paiva) DESC';
-        } else if ($jarjestys == 'kesto') {
-            $jarjesta = 'kesto DESC';
-        } else {
-            $jarjesta = 'nimi';
-        }
+        $jarjesta = Tyosyote::jarjesta($jarjestys);
 
         $sql = "SELECT nimi, syote_id, kuvaus, to_char(paiva, 'DD/MM/YYYY') as paiva, kesto, lisatiedot, henkilo.henkilo_id, projekti_id FROM henkilo JOIN tyosyote ON henkilo.henkilo_id = tyosyote.henkilo_id AND tyosyote.projekti_id = ? ORDER BY $jarjesta, date(paiva) DESC";
         $kysely = getTietokantayhteys()->prepare($sql);
@@ -190,6 +172,23 @@ class Tyosyote {
             $tulokset[] = $syote;
         }
         return $tulokset;
+    }
+
+    static function jarjesta($jarjestys) {
+        $jarjesta = "";
+
+        if ($jarjestys == "lisatiedot") {
+            $jarjesta = "lisatiedot ASC";
+        } else if ($jarjestys == 'kuvaus') {
+            $jarjesta = 'kuvaus';
+        } else if ($jarjestys == 'paiva') {
+            $jarjesta = 'date(paiva) DESC';
+        } else if ($jarjestys == 'kesto') {
+            $jarjesta = 'kesto DESC';
+        } else {
+            $jarjesta = 'nimi';
+        }
+        return $jarjesta;
     }
 
 //    henkilön projektikohtainen työsyötelistaus

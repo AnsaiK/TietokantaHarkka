@@ -89,6 +89,7 @@ class Projekti {
         return $projekti;
     }
 
+//    hallinnointi_henkilon_tiedot.php - henkilön projektien ja siihen liittyvien tuntimerkintöjen yhteenveto tunneista ja merkintöjen lkm:stä
     public static function etsiHenkilonProjektit($henkilo_id, $jarjestys) {
         $jarjesta = "";
 
@@ -143,7 +144,13 @@ class Projekti {
         $sql = "SELECT count(projekti_id) FROM osallistuja WHERE henkilo_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
-        return $kysely->fetchColumn();
+        $tulos = $kysely->fetchColumn();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return $tulos;
+        }
     }
 
 //    kaikkien projektien lukumäärä
@@ -151,7 +158,13 @@ class Projekti {
         $sql = "SELECT count(*) from projekti";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute();
-        return $kysely->fetchColumn();
+        $tulos = $kysely->fetchColumn();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return $tulos;
+        }
     }
 
 //    projektin lisäys
@@ -226,7 +239,13 @@ class Projekti {
         $sql = "SELECT count(henkilo_id) from osallistuja WHERE projekti_id =?";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id));
-        return $kysely->fetchColumn();
+        $tulos = $kysely->fetchColumn();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return $tulos;
+        }
     }
 
 //    listaus projekteista ja yhteenveto hlöiden ja merkintöjen määrästä - hallinnointi_projektit_listaus_view.php / hallinnointi_projektit.php sivulle
@@ -253,7 +272,13 @@ class Projekti {
         $sql = "SELECT count(syote_id) from tyosyote where projekti_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id));
-        return $kysely->fetchColumn();
+        $tulos = $kysely->fetchColumn();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return $tulos;
+        }
     }
 
     public static function liitaHloProjektiin($henkilo_id, $projekti_id) {
@@ -272,7 +297,13 @@ class Projekti {
         $sql = "SELECT nimi FROM projekti WHERE projekti_id =?";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id));
-        return $kysely->fetchColumn();
+        $tulos = $kysely->fetchColumn();
+
+        if ($tulos == null) {
+            return null;
+        } else {
+            return $tulos;
+        }
     }
 
 //    hallinnointi_projektit.php - projektikohtainen yhtenveto henkilöistä, tunneista ja merkintöjen määristä
@@ -290,6 +321,8 @@ class Projekti {
             $tiedot[3] = $tulos->lkm;
             $tulokset[] = $tiedot;
         }
+
         return $tulokset;
     }
+
 }
