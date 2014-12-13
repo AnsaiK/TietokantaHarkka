@@ -10,15 +10,22 @@ $projekti_id = (int) $_GET['id'];
 $jarjestys = $_GET['sort'];
 $ProjektinNimi = $_GET['nimi'];
 $ProjektinKuvaus = $_GET['kuvaus'];
+$filtteroiHenkilo_id = $_GET['filter'];
 
 $muokattavaProjekti_id = $_GET['muokkausid'];
 
 $projektiLkm = Projekti::etsiProjektienLkm();
-$projektitJaLkm = Projekti::etsiKaikkiProjektitJaHloLkm();
+$projektitJaLkm = Projekti::etsiKaikkiProjektitJaHloJaSyoteLkm();
 
 //Kun projektin linkki valitaan, näytetään projektin tiedot
+$filtteroityHlo;
 if (!empty($projekti_id)) {
-    $projektinSyotteet = Tyosyote::etsiProjektinTyosyotteet($projekti_id, $jarjestys);
+    if (empty($filtteroiHenkilo_id)) {
+        $projektinSyotteet = Tyosyote::etsiProjektinTyosyotteet($projekti_id, $jarjestys);
+    } else {
+        $projektinSyotteet = Tyosyote::etsiProjektinTyosyotteetHenkilolle($projekti_id, $filtteroiHenkilo_id);
+        $filtteroityHlo = $filtteroiHenkilo_id;
+    }
     $projektinNimi = Projekti::etsiProjektinNimi($projekti_id);
     $projektinTunnit = Tyosyote::etsiProjektinTuntimaara($projekti_id);
     $projektinSyoteMaara = Tyosyote::etsiProjektinSyoteMaara($projekti_id);
@@ -37,20 +44,11 @@ if (!empty($projekti_id)) {
         'projektinKuvaustenLkm' => $projektinKuvaustenLkm,
         'projektinHloYhteenveto' => $projektinHloYhteenveto,
         'projekti_id' => $projekti_id,
-        'listausTaiMuokkaus' => 'hallinnointi_projektit_lisays_view.php'
+        'listausTaiMuokkaus' => 'hallinnointi_projektit_lisays_view.php',
+        'filtteriHlo' => $filtteroityHlo
     ));
     exit();
 }
-//else if (!empty($muokattavaProjekti_id) && !isset($_SESSION['virheet'])){
-//
-//    naytaNakyma("hallinnointi_projektit_view.php", array(
-//        'listausTaiMuokkaus' => 'hallinnointi_projektit_muokkaus_view.php',
-//        'projektiLkm' => $projektiLkm,
-//        'projektitJaLkm' => $projektitJaLkm,
-//        'muokattavaNimi' => $ProjektinNimi,
-//        'muokattavaKuvaus' => $ProjektinKuvaus
-//    ));
-//}
 
 //muokkausnäkymän ohjaus
 else if (!empty($muokattavaProjekti_id)) {
@@ -64,7 +62,6 @@ else if (!empty($muokattavaProjekti_id)) {
     ));
     exit();
 }
-
 
 //lisäysnäkymän ohjaus
 else {

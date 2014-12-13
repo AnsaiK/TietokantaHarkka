@@ -13,7 +13,7 @@ $vahvistettava_id = $_POST['vahvista'];
 $vahvistamuokkaus_id = $_GET['muokkausid'];
 
 $projektiLkm = Projekti::etsiProjektienLkm();
-$projektitJaLkm = Projekti::etsiKaikkiProjektitJaHloLkm();
+$projektitJaLkm = Projekti::etsiKaikkiProjektitJaHloJaSyoteLkm();
 
 //ohjaa muokkausnäkymään kun painettu muokkausnappia
 if (!empty($muokattava_id)) {

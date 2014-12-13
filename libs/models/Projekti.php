@@ -6,6 +6,7 @@ class Projekti {
     private $kuvaus;
     private $projekti_id;
     private $hlomaara;
+    private $syotteidenMaara;
 
     public function __construct($nimi, $kuvaus, $projekti_id) {
         $this->nimi = $nimi;
@@ -27,6 +28,14 @@ class Projekti {
 
     public function getProjekti_id() {
         return $this->projekti_id;
+    }
+
+    public function getSyotteidenMaara() {
+        return $this->syotteidenMaara;
+    }
+
+    public function setSyotteidenMaara($syotteidenMaara) {
+        $this->syotteidenMaara = $syotteidenMaara;
     }
 
     public function setNimi($nimi) {
@@ -220,7 +229,8 @@ class Projekti {
         return $kysely->fetchColumn();
     }
 
-    public static function etsiKaikkiProjektitJaHloLkm() {
+//    listaus projekteista ja yhteenveto hlöiden ja merkintöjen määrästä - hallinnointi_projektit_listaus_view.php / hallinnointi_projektit.php sivulle
+    public static function etsiKaikkiProjektitJaHloJaSyoteLkm() {
         $sql = "SELECT projekti.nimi, projekti.kuvaus, projekti.projekti_id, COUNT(osallistuja.henkilo_id) as maara FROM projekti LEFT JOIN osallistuja ON projekti.projekti_id = osallistuja.projekti_id GROUP BY projekti.nimi, projekti.kuvaus, projekti.projekti_id ORDER BY projekti.nimi ASC";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute();
@@ -232,10 +242,18 @@ class Projekti {
             $projekti->setKuvaus($tulos->kuvaus);
             $projekti->setProjekti_id($tulos->projekti_id);
             $projekti->setHlomaara($tulos->maara);
+            $projekti->setSyotteidenMaara(Projekti::etsiProjektinSyotteidenLkm($tulos->projekti_id));
 
             $tulokset[] = $projekti;
         }
         return $tulokset;
+    }
+
+    public static function etsiProjektinSyotteidenLkm($projekti_id) {
+        $sql = "SELECT count(syote_id) from tyosyote where projekti_id = ?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($projekti_id));
+        return $kysely->fetchColumn();
     }
 
     public static function liitaHloProjektiin($henkilo_id, $projekti_id) {
@@ -258,6 +276,7 @@ class Projekti {
     }
 
 //    hallinnointi_projektit.php - projektikohtainen yhtenveto henkilöistä, tunneista ja merkintöjen määristä
+//    tallennettu array:hin, koska haussa projektin, työsyötteen ja henkilön tietoja, ei sovi luontevasti olio-atribuutteihin.
     public static function etsiProjektinYhteenVetoHenkiloille($projekti_id) {
         $sql = "SELECT henkilo.henkilo_id, henkilo.nimi, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM henkilo RIGHT JOIN osallistuja on henkilo.henkilo_id = osallistuja.henkilo_id LEFT JOIN tyosyote on osallistuja.henkilo_id = tyosyote.henkilo_id and osallistuja.projekti_id = tyosyote.projekti_id WHERE osallistuja.projekti_id = ? GROUP BY henkilo.nimi, henkilo.henkilo_id ORDER BY kesto";
         $kysely = getTietokantayhteys()->prepare($sql);
@@ -273,21 +292,4 @@ class Projekti {
         }
         return $tulokset;
     }
-
-    public static function etsiHenkilonProjektienYhteenVeto($henkilo_id) {
-        $sql = "SELECT projekti.nimi, projekti.kuvaus, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM projekti RIGHT JOIN osallistuja on projekti.projekti_id = osallistuja.projekti_id LEFT JOIN tyosyote on osallistuja.projekti_id = tyosyote.projekti_id and osallistuja.henkilo_id = tyosyote.henkilo_id WHERE osallistuja.henkilo_id = ? GROUP BY projekti.nimi, projekti.kuvaus ORDER BY projekti.nimi";
-        $kysely = getTietokantayhteys()->prepare($sql);
-        $kysely->execute(array($henkilo_id));
-        $tulokset = array();
-        foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
-            $tiedot = array();
-            $tiedot[0] = $tulos->nimi;
-            $tiedot[1] = $tulos->kuvaus;
-            $tiedot[2] = $tulos->kesto;
-            $tiedot[3] = $tulos->lkm;
-            $tulokset[] = $tiedot;
-        }
-        return $tulokset;
-    }
-
 }

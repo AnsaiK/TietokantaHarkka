@@ -1,4 +1,5 @@
 <?php
+require_once "libs/models/Tyosyote.php";
 
 class Henkilo {
 
@@ -8,6 +9,8 @@ class Henkilo {
     private $salasana;
     private $vastuuhenkilo;
     private $admin;
+    private $tunnit;
+    private $merkinnat;
 
     public function __construct($henkilo_id, $nimi, $kayttajatunnus, $salasana) {
         $this->henkilo_id = $henkilo_id;
@@ -36,11 +39,28 @@ class Henkilo {
         return $this->vastuuhenkilo;
     }
 
-    function getAdmin() {
+    public function getAdmin() {
         return $this->admin;
     }
 
-    function setAdmin($admin) {
+    public function getTunnit() {
+        return $this->tunnit;
+    }
+
+    public function getMerkinnat() {
+        return $this->merkinnat;
+    }
+
+    public function setTunnit($tunnit) {
+        $this->tunnit = $tunnit;
+    }
+
+    public function setMerkinnat($merkinnat) {
+        $this->merkinnat = $merkinnat;
+    }
+
+        
+    public function setAdmin($admin) {
         $this->admin = $admin;
     }
 
@@ -79,6 +99,8 @@ class Henkilo {
             $henkilo->salasana = $tulos->salasana;
             $henkilo->vastuuhenkilo = Henkilo::onkoVastuuhenkilo($tulos->henkilo_id);
             $henkilo->admin = Henkilo::onkoKayttajaAdmin($tulos->henkilo_id);
+            $henkilo->tunnit = Tyosyote::etsiHenkilonTunnit($tulos->henkilo_id);
+            $henkilo->merkinnat = Tyosyote::etsiHenkilonMerkintojenLkm($tulos->henkilo_id);
             $tulokset[] = $henkilo;
         }
         return $tulokset;
@@ -199,6 +221,29 @@ class Henkilo {
         $sql = "DELETE from vastuuhenkilo WHERE henkilo_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
+    }
+
+    public static function etsiHenkilonProjektienYhteenVeto($henkilo_id) {
+        $sql = "SELECT projekti.nimi, projekti.kuvaus, COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm FROM projekti RIGHT JOIN osallistuja on projekti.projekti_id = osallistuja.projekti_id LEFT JOIN tyosyote on osallistuja.projekti_id = tyosyote.projekti_id and osallistuja.henkilo_id = tyosyote.henkilo_id WHERE osallistuja.henkilo_id = ? GROUP BY projekti.nimi, projekti.kuvaus ORDER BY projekti.nimi";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id));
+        $tulokset = array();
+        foreach ($kysely->fetchAll(PDO::FETCH_OBJ) as $tulos) {
+            $tiedot = array();
+            $tiedot[0] = $tulos->nimi;
+            $tiedot[1] = $tulos->kuvaus;
+            $tiedot[2] = $tulos->kesto;
+            $tiedot[3] = $tulos->lkm;
+            $tulokset[] = $tiedot;
+        }
+        return $tulokset;
+    }
+
+    public static function etsiHenkilonNimi($henkilo_id) {
+        $sql = "SELECT nimi from henkilo where henkilo_id = ?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id));
+        return $kysely->fetchColumn();
     }
 
 }

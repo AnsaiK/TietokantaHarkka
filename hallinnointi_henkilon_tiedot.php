@@ -16,7 +16,7 @@ $tyosyotteet = Tyosyote::etsiHenkilonTyosyotteet($henkilo_id, $jarjestys);
 $projektiLkm = Projekti::etsiHenkilonProjektiLKm($henkilo_id);
 $vikaMerkinta = Tyosyote::etsiHenkilonVikaSyotePvm($henkilo_id);
 $tunnitJaMerkinnat = Tyosyote::etsiHenkilonTunnitjaMerkintojenLkm($henkilo_id);
-$projektienYhteenveto = Projekti::etsiHenkilonProjektienYhteenVeto($henkilo_id);
+$projektienYhteenveto = Henkilo::etsiHenkilonProjektienYhteenVeto($henkilo_id);
 
 naytaNakyma('hallinnointi_henkilonTiedot_view.php', array(
     'henkilo' => $henkilo,

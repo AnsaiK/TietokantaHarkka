@@ -1,5 +1,7 @@
 <?php
 
+require_once "libs/models/Henkilo.php";
+
 class Tyosyote {
 
     private $syote_id;
@@ -145,7 +147,7 @@ class Tyosyote {
             $syote->setHenkilo_id($tulos->henkilo_id);
             $syote->setProjekti_id($tulos->projekti_id);
             $syote->setProjekti_nimi($tulos->nimi);
-            $syote->setHenkilo_nimi();
+            $syote->setHenkilo_nimi(Henkilo::etsiHenkilonNimi($tulos->henkilo_id));
 
             $tulokset[] = $syote;
         }
@@ -191,8 +193,22 @@ class Tyosyote {
     }
 
 //    henkilön projektikohtainen työsyötelistaus
-    public static function etsiProjektinTyosyotteetHenkilolle($projekti_id, $henkilo_id) {
-        $sql = "SELECT projekti.nimi, t.syote_id, t.kuvaus, to_char(t.paiva, 'DD/MM/YYYY') as paiva, t.kesto, t.lisatiedot, t.henkilo_id, t.projekti_id FROM tyosyote AS t LEFT JOIN projekti ON projekti.projekti_id = t.projekti_id WHERE t.projekti_id = ? and t.henkilo_id = ? ORDER BY t.paiva DESC";
+    public static function etsiProjektinTyosyotteetHenkilolle($projekti_id, $henkilo_id, $jarjestys) {
+        $jarjesta = "";
+
+        if ($jarjestys == "lisatiedot") {
+            $jarjesta = "lisatiedot ASC";
+        } else if ($jarjestys == 'kuvaus') {
+            $jarjesta = 'kuvaus';
+        } else if ($jarjestys == 'nimi') {
+            $jarjesta = 'nimi';
+        } else if ($jarjestys == 'kesto') {
+            $jarjesta = 'kesto DESC';
+        } else {
+            $jarjesta = 'date(paiva) DESC';
+        }
+
+        $sql = "SELECT projekti.nimi, t.syote_id, t.kuvaus, to_char(t.paiva, 'DD/MM/YYYY') as paiva, t.kesto, t.lisatiedot, t.henkilo_id, t.projekti_id FROM tyosyote AS t LEFT JOIN projekti ON projekti.projekti_id = t.projekti_id WHERE t.projekti_id = ? and t.henkilo_id = ? ORDER BY $jarjesta, date(t.paiva) DESC";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($projekti_id, $henkilo_id));
 
@@ -208,7 +224,8 @@ class Tyosyote {
             $syote->setHenkilo_id($tulos->henkilo_id);
             $syote->setProjekti_id($tulos->projekti_id);
             $syote->setProjekti_nimi($tulos->nimi);
-            $syote->setHenkilo_nimi();
+            $syote->setHenkilo_nimi(Henkilo::etsiHenkilonNimi($tulos->henkilo_id));
+
 
             $tulokset[] = $syote;
         }
@@ -309,7 +326,7 @@ class Tyosyote {
         return $kysely->fetchColumn();
     }
 
-    //    hallinnointi_henkilon_tiedot.php
+//    hallinnointi_henkilon_tiedot.php
     public static function etsiProjektinSyoteenKuvaustenLkm($projekti_id) {
         $sql = "SELECT count(DISTINCT kuvaus) FROM tyosyote WHERE projekti_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);
@@ -317,13 +334,8 @@ class Tyosyote {
         return $kysely->fetchColumn();
     }
 
-    //    hallinnointi_henkilon_tiedot.php
+//    hallinnointi_henkilon_tiedot.php
     public static function etsiHenkilonVikaSyotePvm($henkilo_id) {
-//        $sql = "SELECT to_char(paiva, 'DD/MM/YYYY') as paiva from tyosyote where henkilo_id = ? ORDER BY paiva DESC limit 1";
-//        $kysely = getTietokantayhteys()->prepare($sql);
-//        $kysely->execute(array($henkilo_id));
-//        return $kysely->fetchColumn();
-
         $sql = "SELECT to_char(paiva, 'DD.MM.YYYY') as paiva, projekti.nimi from tyosyote join projekti on tyosyote.projekti_id = projekti.projekti_id where henkilo_id = ? GROUP BY projekti.nimi, tyosyote.paiva  ORDER BY paiva DESC limit 1";
         $kysely = getTietokantayhteys()->prepare($sql);
         $kysely->execute(array($henkilo_id));
@@ -344,6 +356,20 @@ class Tyosyote {
         $tulokset[0] = $tulos[0]->kesto;
         $tulokset[1] = $tulos[0]->lkm;
         return $tulokset;
+    }
+
+    public static function etsiHenkilonTunnit($henkilo_id) {
+        $sql = "SELECT COALESCE(sum(tyosyote.kesto),0) as tunnit from tyosyote where henkilo_id = ?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id));
+        return $kysely->fetchColumn();
+    }
+
+    public static function etsiHenkilonMerkintojenLkm($henkilo_id) {
+        $sql = "SELECT count(tyosyote.syote_id) as merkinnat from tyosyote where henkilo_id = ?";
+        $kysely = getTietokantayhteys()->prepare($sql);
+        $kysely->execute(array($henkilo_id));
+        return $kysely->fetchColumn();
     }
 
 }

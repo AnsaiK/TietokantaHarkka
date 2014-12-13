@@ -5,11 +5,7 @@
         <group>
             <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/models/Henkilo.php</file>
             <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/css/bootstrap.css</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/hallinnointi_henkilot.php</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/sql/create-tables.sql</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/hallinnointi_henkilot_view.php</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/pohja.php</file>
-            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/libs/models/Projekti.php</file>
+            <file>file:/Users/Anssi/tietokanta/TietokantaHarkka/views/hallinnointi_projektit_valitun_projektin_tiedot_view.php</file>
         </group>
     </open-files>
 </project-private>

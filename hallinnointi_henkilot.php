@@ -4,8 +4,11 @@ require_once 'libs/common.php';
 require_once 'libs/tietokantayhteys.php';
 require_once "libs/models/Henkilo.php";
 require_once "libs/models/Projekti.php";
+require_once "libs/models/Tyosyote.php";
+
 
 $henkilot = Henkilo::etsiKaikkiHenkilot();
+
 
 $poistaVastuuhenkilo = $_POST['poista'];
 $lisaaVastuuhenkilo = $_POST['lisaa'];
@@ -16,7 +19,6 @@ if (!empty($poistaVastuuhenkilo)) {
 }
 
 if (!empty($lisaaVastuuhenkilo)) {
-    $_SESSION['kuittaus'] = 'tsti';
 
     Henkilo::lisaaVastuuhenkilo($lisaaVastuuhenkilo);
     header('Location: hallinnointi_henkilot.php');

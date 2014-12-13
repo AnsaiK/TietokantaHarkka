@@ -14,9 +14,12 @@ if (!isset($_SESSION['vastuuhenkilo'])) {
             <thead>
                 <tr>
                     <th>Henkilö</th>
+                    <th>Tunteja</th>
+                    <th>Merkintöjä</th>
+
                     <?php if (isset($_SESSION['admin'])) : ?>
-                        <th>Oikeudet</th>
-                        <th>Muokkaa: vastuuhenkilö</th>
+                        <th>Käyttöoikeudet</th>
+                        <th>Vastuuhenkilön oikeudet</th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -25,6 +28,9 @@ if (!isset($_SESSION['vastuuhenkilo'])) {
                 <?php foreach ($data->henkilo as $hlo): ?>
                     <tr>               
                         <td><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $hlo->getHenkilo_id(); ?>"><?php echo $hlo->getNimi(); ?></a></td>
+                        <td class ="col-xs-2"><?php echo $hlo->getTunnit(); ?></td>
+                        <td class ="col-xs-2"><?php echo $hlo->getMerkinnat();?></td>
+                        
                         <?php if (isset($_SESSION['admin'])) : ?>
                             <?php if ($hlo->getAdmin()): ?> 
                                 <td>Admin</td>
