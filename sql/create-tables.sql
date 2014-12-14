@@ -22,7 +22,7 @@ CREATE TABLE tyosyote(
         lisatiedot varchar (160), 
 	paiva date NOT NULL,
 	kesto decimal(2,1) NOT NULL,
-        henkilo_id serial REFERENCES henkilo, 
+        henkilo_id serial REFERENCES henkilo ON DELETE CASCADE, 
 	projekti_id serial REFERENCES projekti(projekti_id) ON DELETE CASCADE 
 );
 

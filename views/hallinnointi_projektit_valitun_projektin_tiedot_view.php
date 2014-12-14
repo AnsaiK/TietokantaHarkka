@@ -13,31 +13,34 @@
                 <thead>
                 <h5>Osallistujat:</h5>
                 <tr>   
-                    <th>suodata</th>
                     <th>nimi</th>
                     <th>tunnit yhteensä</th>
                     <th>merkintöjen lkm</th>
+                    <th>suodata nimellä</th>
+
                 </tr>
                 </thead>
                 <tbody>
                     <!--henkilöittäin filtteröinnin checkbox sekä projektin henkilöt ja heidän tietojen yhteenveto. Array[0] = hlo_id, Array[1] = nimi, Array[2] = tunnit yhteensä, Array[3] = merkintöjen lkm-->
                     <?php foreach ($data->projektinHloYhteenveto as $hlo): ?>
                         <tr>  
-                            <td class="col-xs-1"><input type="checkbox" name="redirect" value="hallinnointi_projektit.php?id=<?php echo $data->projekti_id; ?>&filter=<?php echo $hlo[0]; ?>#merkinnat" 
-                                                        <?php if ($hlo[0] == $data->filtteriHlo): ?> checked="checked"<?php endif; ?>
-                                                        ></td>             
+
                             <td class="col-xs-2"><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $hlo[0]; ?>"><?php echo $hlo[1]; ?></a></td>
                             <td class="col-xs-3"><?php echo $hlo[2]; ?></td>
-                            <td class="col-xs-6"><?php echo $hlo[3]; ?></td> 
+                            <td class="col-xs-5"><?php echo $hlo[3]; ?></td> 
+                            <td class="col-xs-2"><input type="checkbox" name="redirect" value="hallinnointi_projektit.php?id=<?php echo $data->projekti_id; ?>&filter=<?php echo $hlo[0]; ?>#merkinnat" 
+                                                        <?php if ($hlo[0] == $data->filtteriHlo): ?> checked="checked"<?php endif; ?>
+                                                        ></td>            
                         </tr>
                     <?php endforeach; ?>
 
                     <!--henkilöiden tietojen yhteenveto-->
                     <tr>
-                        <td class="col-xs-1"><input type="checkbox" name="redirect" value="hallinnointi_projektit.php?id=<?php echo $data->projekti_id; ?>#merkinnat" <?php if (empty($data->filtteriHlo)): ?> checked="checked"<?php endif; ?>></td>
                         <td class="col-xs-2"><strong>Kaikki Henkilöt: <?php echo $data->projektinHloLkm; ?> kpl</strong></td>
                         <td class="col-xs-3"><strong><?php echo $data->projektinTunnit; ?> h</strong></td>
-                        <td class="col-xs-6"><strong><?php echo $data->projektinSyoteLkm; ?></strong></td>
+                        <td class="col-xs-5"><strong><?php echo $data->projektinSyoteLkm; ?></strong></td>
+                        <td class="col-xs-2"><input type="checkbox" name="redirect" value="hallinnointi_projektit.php?id=<?php echo $data->projekti_id; ?>#merkinnat" <?php if (empty($data->filtteriHlo)): ?> checked="checked"<?php endif; ?>></td>
+
                     </tr>
 
                     <!--henkilöittäin filtteröinnin checkboxin scripti-->
