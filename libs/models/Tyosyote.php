@@ -334,18 +334,6 @@ class Tyosyote {
     }
 
 //    hallinnointi_henkilon_tiedot.php
-    public static function etsiHenkilonVikaSyotePvm($henkilo_id) {
-        $sql = "SELECT to_char(paiva, 'DD.MM.YYYY') as paiva, projekti.nimi from tyosyote join projekti on tyosyote.projekti_id = projekti.projekti_id where henkilo_id = ? GROUP BY projekti.nimi, tyosyote.paiva  ORDER BY paiva DESC limit 1";
-        $kysely = getTietokantayhteys()->prepare($sql);
-        $kysely->execute(array($henkilo_id));
-        $tulos = $kysely->fetchAll(PDO::FETCH_OBJ);
-        $tulokset = array();
-        $tulokset[0] = $tulos[0]->paiva;
-        $tulokset[1] = $tulos[0]->nimi;
-        return $tulokset;
-    }
-
-//    hallinnointi_henkilon_tiedot.php
     public static function etsiHenkilonTunnitjaMerkintojenLkm($henkilo_id) {
         $sql = "SELECT COALESCE(sum(tyosyote.kesto),0) as kesto, count(tyosyote.syote_id) as lkm from tyosyote where henkilo_id = ?";
         $kysely = getTietokantayhteys()->prepare($sql);

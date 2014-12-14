@@ -1,7 +1,7 @@
 
 <!--Henkilön projektin työsyötteet-->
 <div class="panel panel-default">
-    <div class="panel-heading"><h4 class="panel-title">Projektin tiedot: <?php echo $data->projektinNimi; ?></h4></div>
+    <div class="panel-heading"><h4 class="panel-title">Projektin tiedot: <?php echo htmlspecialchars($data->projektinNimi); ?></h4></div>
     <div class="panel-body">
         <table class="table table-striped">                       
             <thead>                          

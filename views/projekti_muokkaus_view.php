@@ -14,10 +14,10 @@
             </div>
             <!--rivit tietokannasta-->
             <div class="row">
-                <div class="col-xs-4"><input class="form-control" type="text" name ="tehtava" placeholder="Työtehtävä" value="<?php echo $data->uusiSyote->getKuvaus(); ?>"></div>
+                <div class="col-xs-4"><input class="form-control" type="text" name ="tehtava" placeholder="Työtehtävä" value="<?php echo htmlspecialchars($data->uusiSyote->getKuvaus()); ?>"></div>
                 <div class="col-xs-2"><input class="form-control" type="text" name ="paiva" placeholder="21-12-2014" value="<?php echo $data->uusiSyote->getPaiva(); ?>"></div>
                 <div class="col-xs-2"><input class="form-control" type="text" name ="kesto" placeholder="2" value="<?php echo $data->uusiSyote->getKesto(); ?>"></div>
-                <div class="col-xs-4"><input class="form-control" type="text" name ="lisatiedot" placeholder="Lisätietoja" value="<?php echo $data->uusiSyote->getLisatiedot(); ?>"></div>
+                <div class="col-xs-4"><input class="form-control" type="text" name ="lisatiedot" placeholder="Lisätietoja" value="<?php echo htmlspecialchars($data->uusiSyote->getLisatiedot()); ?>"></div>
             </div>
             <!--rivit tietokannasta-->
             <div class="row">

@@ -3,7 +3,6 @@
 require_once "libs/models/Tyosyote.php";
 require_once "libs/models/Projekti.php";
 
-
 class Henkilo {
 
     private $henkilo_id;
@@ -54,7 +53,7 @@ class Henkilo {
     public function getMerkinnat() {
         return $this->merkinnat;
     }
-    
+
     public function getProjektiLkm() {
         return $this->projektiLkm;
     }
@@ -63,7 +62,6 @@ class Henkilo {
         $this->projektiLkm = $projektiLkm;
     }
 
-    
     public function setTunnit($tunnit) {
         $this->tunnit = $tunnit;
     }
@@ -129,7 +127,6 @@ class Henkilo {
             return null;
         } else {
             $henkilo = new Henkilo($tulos->henkilo_id, $tulos->nimi, $tulos->kayttajatunnus, $tulos->salasana);
-
             return $henkilo;
         }
     }
@@ -144,7 +141,6 @@ class Henkilo {
             return null;
         } else {
             $henkilo = new Henkilo($tulos->henkilo_id, $tulos->nimi, $tulos->kayttajatunnus, $tulos->salasana);
-
             return $henkilo;
         }
     }

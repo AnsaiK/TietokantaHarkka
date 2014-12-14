@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading" id="tiedot">
-        <h4 class="panel-title">Merkinnät: <?php echo $data->projektinNimi; ?></h4></div>
+        <h4 class="panel-title">Merkinnät: <?php echo htmlspecialchars($data->projektinNimi); ?></h4></div>
     <div class="panel-body">
         <table class="table">    
             <?php if (!empty($data->henkilonTyosyotteet)): ?>
@@ -16,11 +16,11 @@
                 <tbody>
                     <?php foreach ($data->henkilonTyosyotteet as $hlo_syote): ?>
                         <tr>
-                            <td><?php echo $hlo_syote->getProjekti_nimi(); ?></td>
-                            <td><?php echo $hlo_syote->getKuvaus(); ?></td>
+                            <td><?php echo htmlspecialchars($hlo_syote->getProjekti_nimi()); ?></td>
+                            <td><?php echo htmlspecialchars($hlo_syote->getKuvaus()); ?></td>
                             <td><?php echo $hlo_syote->getPaiva(); ?></td>
                             <td><?php echo $hlo_syote->getKesto(); ?></td>
-                            <td><?php echo $hlo_syote->getLisatiedot(); ?></td>
+                            <td><?php echo htmlspecialchars($hlo_syote->getLisatiedot()); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>

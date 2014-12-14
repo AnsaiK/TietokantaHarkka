@@ -31,7 +31,7 @@ if (!isset($_SESSION['vastuuhenkilo'])) {
                         <td><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $hlo->getHenkilo_id(); ?>"><?php echo $hlo->getNimi(); ?></a></td>
                         <td class ="col-xs-2"><?php echo $hlo->getProjektiLkm(); ?></td>
                         <td class ="col-xs-2"><?php echo $hlo->getTunnit(); ?></td>
-                        <td class ="col-xs-2"><?php echo $hlo->getMerkinnat(); ?></td>
+                        <td class ="col-xs-2"><?php echo htmlspecialchars($hlo->getMerkinnat()); ?></td>
 
                         <?php if (isset($_SESSION['admin'])) : ?>
                             <?php if ($hlo->getAdmin()): ?> 

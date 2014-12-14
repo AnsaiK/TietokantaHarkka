@@ -6,10 +6,10 @@ if (!isset($_SESSION['vastuuhenkilo'])) {
 ?>
 
 <!--projektin lisäys-->
-<?php require $data->listausTaiMuokkaus;?>
+<?php require_once $data->listausTaiMuokkaus;?>
 
 <!--projektien listaus-->
-<?php require 'hallinnointi_projektit_listaus_view.php'; ?>
+<?php require_once 'hallinnointi_projektit_listaus_view.php'; ?>
 
 <!--valitun projektin tietojen listaus-->
 <?php if (!empty($data->projektinNimi)): ?>

@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingTiedot">
-        <h4 class="panel-title"><?php echo $data->projektinNimi; ?></h4>
+        <h4 class="panel-title"><?php echo htmlspecialchars($data->projektinNimi); ?></h4>
     </div>
 
     <div class="panel-body">
@@ -25,7 +25,7 @@
                     <?php foreach ($data->projektinHloYhteenveto as $hlo): ?>
                         <tr>  
 
-                            <td class="col-xs-2"><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $hlo[0]; ?>"><?php echo $hlo[1]; ?></a></td>
+                            <td class="col-xs-2"><a href="hallinnointi_henkilon_tiedot.php?id=<?php echo $hlo[0]; ?>"><?php echo htmlspecialchars($hlo[1]); ?></a></td>
                             <td class="col-xs-3"><?php echo $hlo[2]; ?></td>
                             <td class="col-xs-5"><?php echo $hlo[3]; ?></td> 
                             <td class="col-xs-2"><input type="checkbox" name="redirect" value="hallinnointi_projektit.php?id=<?php echo $data->projekti_id; ?>&filter=<?php echo $hlo[0]; ?>#merkinnat" 
@@ -78,11 +78,11 @@
                     <tbody>
                         <?php foreach ($data->projektinSyotteet as $syote): ?>
                             <tr>               
-                                <td class="col-xs-3"><?php echo $syote->getHenkilo_nimi(); ?></td>
-                                <td class="col-xs-3"><?php echo $syote->getKuvaus(); ?></td>
+                                <td class="col-xs-3"><?php echo htmlspecialchars($syote->getHenkilo_nimi()); ?></td>
+                                <td class="col-xs-3"><?php echo htmlspecialchars($syote->getKuvaus()); ?></td>
                                 <td class="col-xs-2"><?php echo $syote->getPaiva(); ?></td>
                                 <td class="col-xs-1"><?php echo $syote->getKesto(); ?></td>
-                                <td class="col-xs-3"><?php echo $syote->getLisatiedot(); ?></td> 
+                                <td class="col-xs-3"><?php echo htmlspecialchars($syote->getLisatiedot()); ?></td> 
                             </tr>
                         <?php endforeach; ?>
                     </tbody>    
@@ -90,6 +90,5 @@
             </table>
             <!--valitun projektin kaikkien henkilöiden merkintöjen listaus, loppu-->             
         <?php endif; ?>
-
     </div>
 </div>

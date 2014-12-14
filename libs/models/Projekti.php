@@ -146,11 +146,7 @@ class Projekti {
         $kysely->execute(array($henkilo_id));
         $tulos = $kysely->fetchColumn();
 
-        if ($tulos == null) {
-            return null;
-        } else {
-            return $tulos;
-        }
+        return $tulos;
     }
 
 //    kaikkien projektien lukumäärä
@@ -274,11 +270,7 @@ class Projekti {
         $kysely->execute(array($projekti_id));
         $tulos = $kysely->fetchColumn();
 
-        if ($tulos == null) {
-            return null;
-        } else {
-            return $tulos;
-        }
+        return $tulos;
     }
 
     public static function liitaHloProjektiin($henkilo_id, $projekti_id) {

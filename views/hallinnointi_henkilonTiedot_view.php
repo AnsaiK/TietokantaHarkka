@@ -16,7 +16,7 @@ if (!isset($_SESSION['vastuuhenkilo'])) {
 <ol class="breadcrumb">
     <li><a href="etusivu.php">Home: <?php echo htmlspecialchars($_SESSION['nimi']) ?></a></li>
     <li><a href="hallinnointi_henkilot.php">Hallinnointi: henkilöt</a></li>
-    <li class="active"><?php echo $data->henkilo->getNimi(); ?></li>
+    <li class="active"><?php echo htmlspecialchars($data->henkilo->getNimi()); ?></li>
 
 </ol>
 
